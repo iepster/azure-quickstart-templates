@@ -10,7 +10,6 @@
     },
     "assetLocation": {
       "value": "https://github.com/ErezPasternak/azure-quickstart-templates/raw/EricomConnect/ec-deployment"
-
     },
     "domainName": {
       "value": “test.local"
