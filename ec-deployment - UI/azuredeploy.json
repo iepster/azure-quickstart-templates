@@ -38,14 +38,14 @@
 
         "numberOfRdshInstances": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of RDSH instances"
             }
         },
         "rdshVmSize": {
             "type": "string",
-            "defaultValue": "Standard_A2",
+            "defaultValue": "Standard_D3”,
             "metadata": {
                 "description": "The size of the RDSH VMs"
             }
@@ -212,7 +212,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_A2"
+                    "vmSize": "Standard_D3”
                 },
                 "osProfile": {
                     "computerName": "dc",
