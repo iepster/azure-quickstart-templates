@@ -44,7 +44,7 @@
         },
         "rdshVmSize": {
             "type": "string",
-            "defaultValue": "Standard_A2”,
+            "defaultValue": "Standard_A2",
             "metadata": {
                 "description": "The size of the RDSH VMs"
             }
@@ -211,7 +211,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_A2”
+                    "vmSize": "Standard_A2"
                 },
                 "osProfile": {
                     "computerName": "dc",
@@ -582,7 +582,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_D3”
+                    "vmSize": "Standard_D3"
                 },
                 "availabilitySet": {
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', 'availabilityset')]"
