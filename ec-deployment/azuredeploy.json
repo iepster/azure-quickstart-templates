@@ -54,7 +54,7 @@
 
         "assetLocation": {
             "type": "string",
-            "defaultValue": "https://github.com/Azure/azure-quickstart-templates/raw/master/rds-deplo1yment",
+            "defaultValue": "https://github.com/ErezPasternak/azure-quickstart-templates/tree/EricomConnect/ec-deployment",
             "metadata": {
                 "description": "The location of resources such as templates and DSC modules that the script is dependent"
             }
