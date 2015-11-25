@@ -1,7 +1,7 @@
 {
-  "itemDisplayName": "RD Session Collection deployment",
-  "description": "This template creates a simple RDSH deployment",
+  "itemDisplayName": “EC and RDS Session Collection deployment",
+  "description": "This template creates a simple Ericom Connect deployment",
   "summary": "Creates RDSH deployment",
-  "githubUsername": "mmarch",
-  "dateUpdated": "2015-04-20"
+  "githubUsername": “ErezPasternak”,
+  "dateUpdated": "2015-11-25”
 }
