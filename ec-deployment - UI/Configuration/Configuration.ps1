@@ -111,7 +111,27 @@ configuration SessionHost
             Ensure = "Present"
             Name = "RDS-RD-Server"
         }
+	
+	Script DownloadECAndDeploy
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectPOC.exe"
+            }
+            SetScript ={
+                $source = "https://www.ericom.com/demos/EricomConnectPOC.exe"
+                $dest = "C:\EricomConnectPOC.exe"
+                Invoke-WebRequest $source -OutFile $dest
+				# install
+				# Write-Verbose "starting installer" 
+                # $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
+                # Write-Verbose "Command to run: $cmd"
+                # Invoke-Expression cmd | Write-Verbose
+            }
+            GetScript = {@{Result = "DownloadECAndDeploy"}}
+      
+        }
     }
+
 }
 
 
