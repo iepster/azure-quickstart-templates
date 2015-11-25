@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "adminPassword": {
-      "value": “Ericom123$”
+      "value": "Ericom123$"
     },
     "adminUsername": {
-      "value": “Ericom”
+      "value": "Ericom"
     },
     "assetLocation": {
       "value": "https://github.com/ErezPasternak/azure-quickstart-templates/raw/EricomConnect/ec-deployment"
     },
     "domainName": {
-      "value": “test.local"
+      "value": "test.local"
     },
     "newStorageAccountName": {
-      "value": “storagedemo”
+      "value": "storagedemo"
     },
     "numberOfRdshInstances": {
       "value": 2
