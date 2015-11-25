@@ -2,6 +2,6 @@
   "itemDisplayName": "EC and RDS Session Collection deployment",
   "description": "This template creates a simple Ericom Connect deployment",
   "summary": "Creates RDSH deployment",
-  "githubUsername": "ErezPasternak"],
+  "githubUsername": "ErezPasternak",
   "dateUpdated": "2015-11-25"
 }
