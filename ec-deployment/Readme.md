@@ -8,4 +8,6 @@ The template will deploy DC, join all vms to the domain and configure RDS roles 
 
 Click the button below to deploy
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FErezPasternak%2Fazure-quickstart-templates%2FEricomConnect%2Fec-deployment%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
