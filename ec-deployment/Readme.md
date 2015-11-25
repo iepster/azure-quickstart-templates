@@ -1,4 +1,4 @@
-# Creates Remote Desktop Session Collection deployment
+# Creates Ericom Connect deployment
 
 This template deploys the following resources:
 
