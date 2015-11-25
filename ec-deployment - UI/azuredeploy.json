@@ -35,10 +35,9 @@
                 "description": "The password for the administrator account of the new VM and the domain"
             }
         },
-
         "numberOfRdshInstances": {
             "type": "int",
-            "defaultValue": 1,
+            "defaultValue": 2,
             "metadata": {
                 "description": "Number of RDSH instances"
             }
