@@ -52,7 +52,7 @@
 
         "assetLocation": {
             "type": "string",
-            "defaultValue": "https://github.com/ErezPasternak/azure-quickstart-templates/tree/EricomConnect/ec-deployment",
+            "defaultValue": "https://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/ec-deployment",
             "metadata": {
                 "description": "The location of resources such as templates and DSC modules that the script is dependent"
             }
@@ -71,7 +71,7 @@
 	 "customScriptLocation": "https://github.com/ErezPasternak/azure-quickstart-templates/tree/EricomConnect/ec-deployment/",
         "publicIpRef": "publicIp"
     },
-
+ 
     "resources": [
 
         {
