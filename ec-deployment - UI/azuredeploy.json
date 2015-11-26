@@ -68,7 +68,7 @@
         "dnsServerPrivateIp": "10.0.0.8",
         "subnetName": "Subnet",
         "subnet-id": "[concat(resourceId('Microsoft.Network/virtualNetworks','VNET'),'/subnets/',variables('subnetName'))]",
-	 "customScriptLocation": "https://github.com/ErezPasternak/azure-quickstart-templates/tree/EricomConnect/ec-deployment/",
+	 "customScriptLocation": "https://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/ec-deployment/",
         "publicIpRef": "publicIp"
     },
  
