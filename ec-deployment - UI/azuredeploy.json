@@ -68,6 +68,7 @@
         "dnsServerPrivateIp": "10.0.0.8",
         "subnetName": "Subnet",
         "subnet-id": "[concat(resourceId('Microsoft.Network/virtualNetworks','VNET'),'/subnets/',variables('subnetName'))]",
+	 "customScriptLocation": "https://github.com/ErezPasternak/azure-quickstart-templates/tree/EricomConnect/ec-deployment/",
         "publicIpRef": "publicIp"
     },
 
@@ -298,7 +299,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('assetLocation'),'/vnet-with-dns-server.json')]",
+                    "uri": "[concat(variables('customScriptLocation'),'vnet-with-dns-server.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
