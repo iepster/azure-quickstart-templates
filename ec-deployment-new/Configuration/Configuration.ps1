@@ -214,8 +214,13 @@ configuration RDSDeployment
             domainName = $domainName 
             adminCreds = $adminCreds 
         }
-
-      	Script DownloadECAndDeploy
+	WindowsFeature installdotNet35 
+	{             
+	     Ensure = "Present"
+	     Name = "Net-Framework-Core"
+	     Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
+	}      	
+	Script DownloadECAndDeploy
         {
             TestScript = {
                 Test-Path "C:\EricomConnectPOC.exe"
