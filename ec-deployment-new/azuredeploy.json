@@ -19,25 +19,28 @@
 
         "domainName": {
             "type": "string",
+            "defaultValue": "test.local",
             "metadata": {
                 "description": "The FQDN of the AD domain"
             }
         },
         "adminUsername": {
             "type": "string",
+	     "defaultValue": "ericom",
             "metadata": {
                 "description": "The name of the administrator of the new VM and the domain. Exclusion list: 'administrator'"
             }
         },
         "adminPassword": {
             "type": "securestring",
+	     "defaultValue": "Ericom123$",
             "metadata": {
                 "description": "The password for the administrator account of the new VM and the domain"
             }
         },
         "numberOfRdshInstances": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "metadata": {
                 "description": "Number of RDSH instances"
             }
