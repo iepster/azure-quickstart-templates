@@ -9,3 +9,8 @@ The template will deploy DC, join all vms to the domain and configure RDS roles 
 Click the button below to deploy
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+
+
+<a href="http://armviz.io/#/?load=hhttps://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/ec-deployment-new/azuredeploy.json" target="_blank">
+  <img src="http://armviz.io/visualizebutton.png"/>
+</a>
