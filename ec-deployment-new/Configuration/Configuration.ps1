@@ -119,7 +119,7 @@ configuration SessionHost
             Name = "RDS-RD-Server"
         }
 	
-	Script DownloadECAndDeploy
+		Script DownloadECAndDeploy
         {
             TestScript = {
                 Test-Path "C:\EricomConnectRemoteHost_x64.exe"
@@ -135,8 +135,17 @@ configuration SessionHost
                 # Invoke-Expression cmd | Write-Verbose
             }
             GetScript = {@{Result = "DownloadECAndDeploy"}}
-      
-        }
+         }
+		 
+		WindowsProcess InstallRemoteHost
+		{
+			Path = "C:\EricomConnectRemoteHost_x64.exe"
+            Arguments = "/silent LAUNCH_CONFIG_TOOL=False"
+            Ensure = "Present"
+			DependsOn = '[Script]DownloadECAndDeploy'
+		}	
+		
+		  
     }
 
 }
@@ -221,7 +230,7 @@ configuration RDSDeployment
 	     Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
 	}      	
 	Script DownloadECAndDeploy
-        {
+    {
             TestScript = {
                 Test-Path "C:\EricomConnectPOC.exe"
             }
@@ -237,18 +246,18 @@ configuration RDSDeployment
             }
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
-        }
+     }
 	 Script Install_poc
-        {
+     {
             TestScript = {
                 Test-Path "C:\EricomConnectPOC1.exe"
             }
             SetScript ={
                 
-		 # Write-Verbose "starting installer" 
-                # $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
-                # Write-Verbose "Command to run: $cmd"
-                # Invoke-Expression cmd | Write-Verbose
+				Write-Verbose "starting installer" 
+                $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
+                Write-Verbose "Command to run: $cmd"
+                invoke-Expression cmd | Write-Verbose
             }
             GetScript = {@{Result = "Install_poc"}}
       
