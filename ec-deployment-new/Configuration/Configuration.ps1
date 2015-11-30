@@ -73,11 +73,6 @@ configuration Gateway
                 $source = "https://www.ericom.com/demos/EricomConnectPOC.exe"
                 $dest = "C:\EricomConnectPOC.exe"
                 Invoke-WebRequest $source -OutFile $dest
-				# install
-				# Write-Verbose "starting installer" 
-                # $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
-                # Write-Verbose "Command to run: $cmd"
-                # Invoke-Expression cmd | Write-Verbose
             }
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
@@ -128,24 +123,41 @@ configuration SessionHost
                 $source = "https://www.ericom.com/demos/EricomConnectRemoteHost_x64.exe"
                 $dest = "C:\EricomConnectRemoteHost_x64.exe"
                 Invoke-WebRequest $source -OutFile $dest
-				# install
-				# Write-Verbose "starting installer" 
-                # $cmd = "C:\EricomConnectRemoteHost_x64.exe /silent /LAUNCH_CONFIG_TOOL=False"
-                # Write-Verbose "Command to run: $cmd"
-                # Invoke-Expression cmd | Write-Verbose
+				Write-Verbose "Ericom Connect POC installation has been started."
+				$exitCode = (Start-Process -Filepath "C:\EricomConnectRemoteHost_x64.exe" -NoNewWindow -ArgumentList "/silent LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
+				if ($exitCode -eq 0) {
+                   Write-Verbose "Ericom Connect Grid Server has been succesfuly installed."
+					} else {
+                    Write-Verbose "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
+                }
             }
+            
             GetScript = {@{Result = "DownloadECAndDeploy"}}
          }
 		 
 		WindowsProcess InstallRemoteHost
 		{
 			Path = "C:\EricomConnectRemoteHost_x64.exe"
-            Arguments = "/silent LAUNCH_CONFIG_TOOL=False"
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
             Ensure = "Present"
-			DependsOn = '[Script]DownloadECAndDeploy'
+			DependsOn = "[Script]DownloadECAndDeploy"
 		}	
-		
-		  
+		Script ExecuteSQLDeploy
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectRemoteHost_x641.exe"
+            }
+            SetScript = {
+            Write-Verbose "Ericom Connect POC installation has been started."
+            $exitCode = (Start-Process -Filepath "C:\EricomConnectRemoteHost_x64.exe" -NoNewWindow -ArgumentList "/silent /LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
+            if ($exitCode -eq 0) {
+                   Write-Verbose "Ericom Connect Grid Server has been succesfuly installed."
+                } else {
+                    Write-Verbose "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
+                }
+            }
+            GetScript = {@{Result = "ExecuteSQLDeploy"}}
+		}
     }
 
 }
@@ -238,12 +250,7 @@ configuration RDSDeployment
                 $source = "https://www.ericom.com/demos/EricomConnectPOC.exe"
                 $dest = "C:\EricomConnectPOC.exe"
                 Invoke-WebRequest $source -OutFile $dest
-				# install
-				# Write-Verbose "starting installer" 
-                # $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
-                # Write-Verbose "Command to run: $cmd"
-                # Invoke-Expression cmd | Write-Verbose
-            }
+			}
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
      }
