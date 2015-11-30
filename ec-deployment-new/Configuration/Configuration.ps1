@@ -238,6 +238,21 @@ configuration RDSDeployment
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
         }
+	 Script Install_poc
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectPOC1.exe"
+            }
+            SetScript ={
+                
+		 # Write-Verbose "starting installer" 
+                # $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
+                # Write-Verbose "Command to run: $cmd"
+                # Invoke-Expression cmd | Write-Verbose
+            }
+            GetScript = {@{Result = "Install_poc"}}
+      
+        }
 
     }
 }
