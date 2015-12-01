@@ -72,7 +72,11 @@
         "subnetName": "Subnet",
         "subnet-id": "[concat(resourceId('Microsoft.Network/virtualNetworks','VNET'),'/subnets/',variables('subnetName'))]",
 	 "customScriptLocation": "https://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/ec-deployment-new/",
-        "publicIpRef": "publicIp"
+        "publicIpRef": "publicIp",
+	"ecGridname" : "ecgrid",
+	"sqlserver" : "localhost",
+	"sqluser"  :"sa",
+	"sqlpassword: "sapass"
     },
  
     "resources": [
@@ -479,7 +483,12 @@
                                 "AdminCreds": {
                                     "UserName": "[parameters('adminUsername')]",
                                     "Password": "PrivateSettingsRef:AdminPassword"
-                                }
+ 				    
+                                },
+  				      "gridName": "[variables('ecGridname')]",
+				      "LUS": "broker.test.local",
+				      "tenant": ""
+
                             }
                         },
                         "protectedSettings": {
@@ -560,7 +569,11 @@
                                 "AdminCreds": {
                                     "UserName": "[parameters('adminUsername')]",
                                     "Password": "PrivateSettingsRef:AdminPassword"
-                                }
+                                },
+ 				  "gridName": "[variables('ecGridname')]",
+				  "LUS": "broker.test.local",
+				  "tenant": ""
+
                             }
                         },
                         "protectedSettings": {
@@ -647,7 +660,12 @@
                         "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
                         "sessionHostNamingPrefix": "rdsh-",
-                        "numberOfRdshInstances": "[parameters('numberOfRdshInstances')]"
+                        "numberOfRdshInstances": "[parameters('numberOfRdshInstances')]",
+			 "gridName": "[variables('ecGridname')]",
+			 "sqlserver": "[variables('sqlserver')]",
+			 "sqluser": "[variables('sqluser')]",
+			 "sqlpassword": "[variables('sqlpassword')]"
+
                     }
                 },
                 "protectedSettings": {
