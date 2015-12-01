@@ -75,8 +75,8 @@
         "publicIpRef": "publicIp",
 	"ecGridname" : "ecgrid",
 	"sqlserver" : "localhost",
-	"sqluser"  :"sa",
-	"sqlpassword: "sapass"
+	"sqluser"  : "sa",
+	"sqlpassword" : "sapass"
     },
  
     "resources": [
