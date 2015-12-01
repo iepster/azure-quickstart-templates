@@ -122,26 +122,12 @@ configuration SessionHost
             SetScript ={
                 $source = "https://www.ericom.com/demos/EricomConnectRemoteHost_x64.exe"
                 $dest = "C:\EricomConnectRemoteHost_x64.exe"
-                Invoke-WebRequest $source -OutFile $dest
-				Write-Verbose "Ericom Connect POC installation has been started."
-				$exitCode = (Start-Process -Filepath "C:\EricomConnectRemoteHost_x64.exe" -NoNewWindow -ArgumentList "/silent LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
-				if ($exitCode -eq 0) {
-                   Write-Verbose "Ericom Connect Grid Server has been succesfuly installed."
-					} else {
-                    Write-Verbose "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
-                }
+                Invoke-WebRequest $source -OutFile $dest				
             }
-            
             GetScript = {@{Result = "DownloadECAndDeploy"}}
          }
 		 
-		WindowsProcess InstallRemoteHost
-		{
-			Path = "C:\EricomConnectRemoteHost_x64.exe"
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            Ensure = "Present"
-			DependsOn = "[Script]DownloadECAndDeploy"
-		}	
+		
 		Script ExecuteSQLDeploy
         {
             TestScript = {
@@ -149,14 +135,15 @@ configuration SessionHost
             }
             SetScript = {
             Write-Verbose "Ericom Connect POC installation has been started."
-            $exitCode = (Start-Process -Filepath "C:\EricomConnectRemoteHost_x64.exe" -NoNewWindow -ArgumentList "/silent /LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
+            $exitCode = (Start-Process -Filepath C:\EricomConnectRemoteHost_x641.exe -ArgumentList "/silent LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
             if ($exitCode -eq 0) {
-                   Write-Verbose "Ericom Connect Grid Server has been succesfuly installed."
+                   Write-Output "Ericom Connect Grid Server has been succesfuly installed."
                 } else {
-                    Write-Verbose "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
+                    Write-Output "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
                 }
             }
             GetScript = {@{Result = "ExecuteSQLDeploy"}}
+        
 		}
     }
 
