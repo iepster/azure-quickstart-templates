@@ -46,7 +46,16 @@ configuration Gateway
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [PSCredential]$adminCreds
+        [PSCredential]$adminCreds,
+		
+		[Parameter(Mandatory)]
+        [String]$gridName,
+		
+		[Parameter(Mandatory)]
+        [String]$LUS,
+		
+		[Parameter(Mandatory)]
+        [String]$tenant
     ) 
 
 
@@ -90,7 +99,16 @@ configuration SessionHost
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [PSCredential]$adminCreds
+        [PSCredential]$adminCreds,
+		
+		[Parameter(Mandatory)]
+        [String]$gridName,
+		
+		[Parameter(Mandatory)]
+        [String]$LUS,
+		
+		[Parameter(Mandatory)]
+        [String]$tenant
     ) 
 
 
