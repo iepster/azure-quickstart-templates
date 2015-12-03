@@ -86,6 +86,16 @@ configuration Gateway
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
         }
+		
+		 Package InstallEC
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectPOC.exe"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script]DownloadECAndDeploy"
+        }
     }
 }
 
@@ -153,12 +163,23 @@ configuration SessionHost
             }
             SetScript = {
             Write-Verbose "Ericom Connect POC installation has been started."
-            $exitCode = (Start-Process -Filepath C:\EricomConnectRemoteHost_x641.exe -ArgumentList "/silent LAUNCH_CONFIG_TOOL=False" -Wait -Passthru).ExitCode
-            if ($exitCode -eq 0) {
-                   Write-Output "Ericom Connect Grid Server has been succesfuly installed."
-                } else {
-                    Write-Output "Ericom Connect Grid Server could not be installed. Exit Code: "  $exitCode
-                }
+            $cmd = "start /wait C:\EricomConnectRemoteHost_x64.exe /silent /LAUNCH_CONFIG_TOOL=False"
+			Write-Verbose "Command to run: $cmd"
+            invoke-Expression cmd | Write-Verbose
+            }
+            GetScript = {@{Result = "ExecuteSQLDeploy"}}
+        
+		}
+        Script ExecuteSQLDeploy
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectRemoteHost_x641.exe"
+            }
+            SetScript = {
+            Write-Verbose "Ericom Connect POC installation has been started."
+            $cmd = "C:\EricomConnectRemoteHost_x64.exe /silent /LAUNCH_CONFIG_TOOL=False /wait"
+			Write-Verbose "Command to run: $cmd"
+            invoke-Expression cmd | Write-Verbose
             }
             GetScript = {@{Result = "ExecuteSQLDeploy"}}
         
@@ -240,14 +261,16 @@ configuration RDSDeployment
             domainName = $domainName 
             adminCreds = $adminCreds 
         }
-	WindowsFeature installdotNet35 
-	{             
-	     Ensure = "Present"
-	     Name = "Net-Framework-Core"
-	     Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
-	}      	
-	Script DownloadECAndDeploy
-    {
+	
+		WindowsFeature installdotNet35 
+		{             
+			Ensure = "Present"
+			Name = "Net-Framework-Core"
+			Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
+		}      	
+	
+		Script DownloadECAndDeploy
+		{
             TestScript = {
                 Test-Path "C:\EricomConnectPOC.exe"
             }
@@ -258,16 +281,17 @@ configuration RDSDeployment
 			}
             GetScript = {@{Result = "DownloadECAndDeploy"}}
       
-     }
-	 Script Install_poc
-     {
+		}
+	 
+		Script Install_poc
+		{
             TestScript = {
                 Test-Path "C:\EricomConnectPOC1.exe"
             }
             SetScript ={
                 
 				Write-Verbose "starting installer" 
-                $cmd = "C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
+                $cmd = "start /wait C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
                 Write-Verbose "Command to run: $cmd"
                 invoke-Expression cmd | Write-Verbose
             }
