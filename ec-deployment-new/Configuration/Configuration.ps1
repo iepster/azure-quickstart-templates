@@ -170,7 +170,7 @@ configuration SessionHost
             GetScript = {@{Result = "ExecuteSQLDeploy"}}
         
 		}
-        Script ExecuteSQLDeploy
+        Script ExecuteSQLDeploy1
         {
             TestScript = {
                 Test-Path "C:\EricomConnectRemoteHost_x641.exe"
@@ -181,7 +181,7 @@ configuration SessionHost
 			Write-Verbose "Command to run: $cmd"
             invoke-Expression cmd | Write-Verbose
             }
-            GetScript = {@{Result = "ExecuteSQLDeploy"}}
+            GetScript = {@{Result = "ExecuteSQLDeploy1"}}
         
 		}
     }
