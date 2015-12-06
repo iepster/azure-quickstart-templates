@@ -17,51 +17,7 @@
             }
         },
 
-        "domainName": {
-            "type": "string",
-            "defaultValue": "test.local",
-            "metadata": {
-                "description": "The FQDN of the AD domain"
-            }
-        },
-        "adminUsername": {
-            "type": "string",
-	     "defaultValue": "ericom",
-            "metadata": {
-                "description": "The name of the administrator of the new VM and the domain. Exclusion list: 'administrator'"
-            }
-        },
-        "adminPassword": {
-            "type": "securestring",
-	     "defaultValue": "Ericom123$",
-            "metadata": {
-                "description": "The password for the administrator account of the new VM and the domain"
-            }
-        },
-        "numberOfRdshInstances": {
-            "type": "int",
-            "defaultValue": 1,
-            "metadata": {
-                "description": "Number of RDSH instances"
-            }
-        },
-        "rdshVmSize": {
-            "type": "string",
-            "defaultValue": "Standard_D2",
-            "metadata": {
-                "description": "The size of the RDSH VMs"
-            }
-        },
-
-        "assetLocation": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/an-deployment",
-            "metadata": {
-                "description": "The location of resources such as templates and DSC modules that the script is dependent"
-            }
-        }
-    },
-
+        
     "variables": {
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
@@ -73,10 +29,10 @@
         "subnet-id": "[concat(resourceId('Microsoft.Network/virtualNetworks','VNET'),'/subnets/',variables('subnetName'))]",
 	 "customScriptLocation": "https://raw.githubusercontent.com/ErezPasternak/azure-quickstart-templates/EricomConnect/an-deployment/",
         "publicIpRef": "publicIp",
-	"ecGridname" : "ecgrid",
-	"sqlserver" : "localhost",
-	"sqluser"  : "sa",
-	"sqlpassword" : "sapass"
+	 "domainName" : "test.local",
+	 "adminUsername" : "ericom",
+	 "adminPassword" : "Ericom123$",
+	 "numberOfRdshInstances": 1
     },
  
     "resources": [
