@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "AN and RDS Session Collection deployment",
+  "description": "This template creates a simple Ericom AccessNow deployment",
+  "summary": "Creates RDSH deployment",
+  "githubUsername": "ErezPasternak",
+  "dateUpdated": "2015-11-25"
+}
