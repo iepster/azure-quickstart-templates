@@ -38,6 +38,9 @@ configuration DomainJoin
 
 
 
+
+
+
 configuration Gateway
 {
    param 
@@ -73,29 +76,55 @@ configuration Gateway
             adminCreds = $adminCreds 
         }
 
-        Script DownloadECAndDeploy
+        Script DownloadGridMSI
         {
             TestScript = {
-                Test-Path "C:\EricomConnectPOC.exe"
+                Test-Path "C:\EricomConnectDataGrid_x64_WT.msi"
             }
             SetScript ={
-                $source = "https://www.ericom.com/demos/EricomConnectPOC.exe"
-                $dest = "C:\EricomConnectPOC.exe"
+                $source = "https://download.ericom.com/public/file/eV4Ahpl_P0Sktt_rLDE_2w/EricomConnectDataGrid_x64_WT.msi"
+                $dest = "C:\EricomConnectDataGrid_x64_WT.msi"
                 Invoke-WebRequest $source -OutFile $dest
             }
-            GetScript = {@{Result = "DownloadECAndDeploy"}}
+            GetScript = {@{Result = "DownloadGridMSI"}}
       
         }
 		
-		 Package InstallEC
+        Package InstallGridMSI
         {
             Ensure = "Present" 
-            Path  = "C:\EricomConnectPOC.exe"
+            Path  = "C:\EricomConnectDataGrid_x64_WT.msi"
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script]DownloadECAndDeploy"
+            DependsOn = "[Script] DownloadGridMSI"
         }
+
+	    Script DownloadSecureGatewayMSI
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectSecureGateway.msi"
+            }
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/SkL3cdmCG0uy4x_3-2BFTg/EricomConnectSecureGateway.msi"
+                $dest = "C:\EricomConnectSecureGateway"
+                Invoke-WebRequest $source -OutFile $dest
+            }
+            GetScript = {@{Result = "DownloadSecureGatewayMSI"}}
+      
+        }
+		
+        Package InstallGridMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectSecureGateway"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadSecureGatewayMSI"
+        }
+
+
     }
 }
 
@@ -142,48 +171,81 @@ configuration SessionHost
             Name = "RDS-RD-Server"
         }
 	
-		Script DownloadECAndDeploy
+		 
+	    Script DownloadGridMSI
         {
             TestScript = {
-                Test-Path "C:\EricomConnectRemoteHost_x64.exe"
+                Test-Path "C:\EricomConnectDataGrid_x64.msi"
             }
             SetScript ={
-                $source = "https://www.ericom.com/demos/EricomConnectRemoteHost_x64.exe"
-                $dest = "C:\EricomConnectRemoteHost_x64.exe"
-                Invoke-WebRequest $source -OutFile $dest				
+                $source = "https://download.ericom.com/public/file/9mKtbaJhwk_rlYv7yLFRXQ/EricomConnectDataGrid_x64.msi"
+                $dest = "C:\EricomConnectDataGrid_x64.msi"
+                Invoke-WebRequest $source -OutFile $dest
             }
-            GetScript = {@{Result = "DownloadECAndDeploy"}}
-         }
-		 
+            GetScript = {@{Result = "DownloadGridMSI"}}
+      
+        }
 		
-		Script ExecuteSQLDeploy
+        Package InstallGridMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectDataGrid_x64.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadGridMSI"
+        }
+
+	    Script DownloadRemoteAgentMSI
         {
             TestScript = {
-                Test-Path "C:\EricomConnectRemoteHost_x641.exe"
+                Test-Path "C:\EricomConnectRemoteAgentClient_x64.msi"
             }
-            SetScript = {
-            Write-Verbose "Ericom Connect POC installation has been started."
-            $cmd = "start /wait C:\EricomConnectRemoteHost_x64.exe /silent /LAUNCH_CONFIG_TOOL=False"
-			Write-Verbose "Command to run: $cmd"
-            invoke-Expression cmd | Write-Verbose
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/sA5xpahFyEWLEGMSfHpp-g/EricomConnectRemoteAgentClient_x64.msi"
+                $dest = "C:\EricomConnectRemoteAgentClient_x64.msi"
+                Invoke-WebRequest $source -OutFile $dest
             }
-            GetScript = {@{Result = "ExecuteSQLDeploy"}}
-        
-		}
-        Script ExecuteSQLDeploy1
+            GetScript = {@{Result = "DownloadRemoteAgentMSI"}}
+      
+        }
+		
+        Package InstallRemoteAgentMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectRemoteAgentClient_x64.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadRemoteAgentMSI"
+        }
+
+	    Script DownloadAccessServerMSI
         {
             TestScript = {
-                Test-Path "C:\EricomConnectRemoteHost_x641.exe"
+                Test-Path "c:\EricomAccessServer64.msi"
             }
-            SetScript = {
-            Write-Verbose "Ericom Connect POC installation has been started."
-            $cmd = "C:\EricomConnectRemoteHost_x64.exe /silent /LAUNCH_CONFIG_TOOL=False /wait"
-			Write-Verbose "Command to run: $cmd"
-            invoke-Expression cmd | Write-Verbose
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/ww2wz-NYAkSUE9KqU4IYLQ/EricomAccessServer64.msi"
+                $dest = "C:\ EricomAccessServer64.msi"
+                Invoke-WebRequest $source -OutFile $dest
             }
-            GetScript = {@{Result = "ExecuteSQLDeploy1"}}
-        
-		}
+            GetScript = {@{Result = "DownloadAccessServerMSI"}}
+      
+        }
+		
+        Package InstallAccessServerMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\ EricomAccessServer64.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadAccessServerMSI"
+        }
+
+	
+	
     }
 
 }
@@ -262,42 +324,134 @@ configuration RDSDeployment
             adminCreds = $adminCreds 
         }
 	
-		WindowsFeature installdotNet35 
-		{             
-			Ensure = "Present"
-			Name = "Net-Framework-Core"
-			Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
-		}      	
+	   WindowsFeature installdotNet35 
+	   {             
+		    Ensure = "Present"
+		    Name = "Net-Framework-Core"
+		    Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
+	   }      	
 	
-		Script DownloadECAndDeploy
-		{
+	   Script DownloadSQLMSI
+       {
             TestScript = {
-                Test-Path "C:\EricomConnectPOC.exe"
+                Test-Path "C:\SQLEXPR_x64_ENU.exe"
             }
             SetScript ={
-                $source = "https://www.ericom.com/demos/EricomConnectPOC.exe"
-                $dest = "C:\EricomConnectPOC.exe"
+                $source = "https://download.ericom.com/public/file/4PYgN5tyT0_qQC6aExom9w/SQLEXPR_x64_ENU.exe"
+                $dest = "C:\SQLEXPR_x64_ENU.exe"
                 Invoke-WebRequest $source -OutFile $dest
-			}
-            GetScript = {@{Result = "DownloadECAndDeploy"}}
-      
-		}
-	 
-		Script Install_poc
-		{
-            TestScript = {
-                Test-Path "C:\EricomConnectPOC1.exe"
             }
-            SetScript ={
-                
-				Write-Verbose "starting installer" 
-                $cmd = "start /wait C:\EricomConnectPOC.exe /silent /LAUNCH_CONFIG_TOOL=False"
-                Write-Verbose "Command to run: $cmd"
-                invoke-Expression cmd | Write-Verbose
-            }
-            GetScript = {@{Result = "Install_poc"}}
+            GetScript = {@{Result = "DownloadSQLMSI"}}
       
         }
+		
+        Package InstallSQLMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\SQLEXPR_x64_ENU.exe"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled"
+            DependsOn = "[Script] DownloadSQLMSI"
+        }
+
+	    Script DownloadGridMSI
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectDataGrid_x64_WT.msi"
+            }
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/eV4Ahpl_P0Sktt_rLDE_2w/EricomConnectDataGrid_x64_WT.msi"
+                $dest = "C:\EricomConnectDataGrid_x64_WT"
+                Invoke-WebRequest $source -OutFile $dest
+            }
+            GetScript = {@{Result = "DownloadGridMSI"}}
+      
+        }
+		
+        Package InstallGridMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectDataGrid_x64_WT"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadGridMSI"
+        }
+	
+	    Script DownloadProcessingUnitServerMSI
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectProcessingUnitServer.msi"
+            }
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/SJEcdw86E0CLwhOTAHoRIA/EricomConnectProcessingUnitServer.msi"
+                $dest = "C:\EricomConnectProcessingUnitServer.msi"
+                Invoke-WebRequest $source -OutFile $dest
+            }
+            GetScript = {@{Result = "DownloadProcessingUnitServerMSI"}}
+      
+        }
+		
+        Package InstallProcessingUnitServerMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectProcessingUnitServer.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadProcessingUnitServerMSI"
+        }
+
+
+	    Script DownloadAdminWebServiceMSI
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectAdminWebService.msi"
+            }
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/xyRW03bY30OSaHJxpgQxOA/EricomConnectAdminWebService.msi"
+                $dest = "C:\EricomConnectAdminWebService.msi"
+                Invoke-WebRequest $source -OutFile $dest
+            }
+            GetScript = {@{Result = "DownloadAdminWebServiceMSI"}}
+      
+        }
+		
+        Package InstallAdminWebServiceMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectAdminWebService.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadAdminWebServiceMSI"
+        }
+
+	    Script DownloadClientWebServiceMSI
+        {
+            TestScript = {
+                Test-Path "C:\EricomConnectClientWebService.msi"
+            }
+            SetScript ={
+                $source = "https://download.ericom.com/public/file/V8MjLB1gmU2ZwVSF79t0Og/EricomConnectClientWebService.msi"
+                $dest = "C:\EricomConnectClientWebService.msi"
+                Invoke-WebRequest $source -OutFile $dest
+            }
+            GetScript = {@{Result = "DownloadClientWebServiceMSI"}}
+      
+        }
+		
+        Package InstallClientWebServiceMSI
+        {
+            Ensure = "Present" 
+            Path  = "C:\EricomConnectClientWebService.msi"
+            Name = "Ericom Connect"
+            ProductId = ""
+            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            DependsOn = "[Script] DownloadClientWebServiceMSI"
+        }
+
 
     }
 }
