@@ -214,7 +214,7 @@ configuration SessionHost
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectRemoteAgentClient_x64.msi"
-            Name = "Ericom Connect"
+            Name = "Ericom Connect Agent Client"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
             DependsOn = "[Script]DownloadRemoteAgentMSI"
@@ -238,12 +238,14 @@ configuration SessionHost
         {
             Ensure = "Present" 
             Path  = "C:\ EricomAccessServer64.msi"
-            Name = "Ericom Connect"
+            Name = "Ericom Access Server"
             ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Arguments = "/silent"
             DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
+	
+	
     }
 
 }
@@ -351,7 +353,7 @@ configuration RDSDeployment
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = '/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled'
-            DependsOn = "[Script]DownloadSQLMSI"
+            DependsOn = "[Script] DownloadSQLMSI"
         }
 
 	    Script DownloadGridMSI
