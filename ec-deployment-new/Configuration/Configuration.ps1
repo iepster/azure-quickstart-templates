@@ -97,7 +97,7 @@ configuration Gateway
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadGridMSI"
+            DependsOn = "[Script]DownloadGridMSI"
         }
 
 	    Script DownloadSecureGatewayMSI
@@ -121,7 +121,7 @@ configuration Gateway
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadSecureGatewayMSI"
+            DependsOn = "[Script]DownloadSecureGatewayMSI"
         }
 
 
@@ -193,7 +193,7 @@ configuration SessionHost
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadGridMSI"
+            DependsOn = "[Script]DownloadGridMSI"
         }
 
 	    Script DownloadRemoteAgentMSI
@@ -217,7 +217,7 @@ configuration SessionHost
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadRemoteAgentMSI"
+            DependsOn = "[Script]DownloadRemoteAgentMSI"
         }
 
 	    Script DownloadAccessServerMSI
@@ -241,11 +241,9 @@ configuration SessionHost
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadAccessServerMSI"
+            DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
-	
-	
     }
 
 }
@@ -353,7 +351,7 @@ configuration RDSDeployment
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = '/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled'
-            DependsOn = "[Script] DownloadSQLMSI"
+            DependsOn = "[Script]DownloadSQLMSI"
         }
 
 	    Script DownloadGridMSI
@@ -377,7 +375,7 @@ configuration RDSDeployment
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadGridMSI"
+            DependsOn = "[Script]DownloadGridMSI"
         }
 	
 	    Script DownloadProcessingUnitServerMSI
@@ -401,7 +399,7 @@ configuration RDSDeployment
             Name = "Ericom Connect"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
-            DependsOn = "[Script] DownloadProcessingUnitServerMSI"
+            DependsOn = "[Script]DownloadProcessingUnitServerMSI"
         }
 
 
@@ -426,7 +424,7 @@ configuration RDSDeployment
             Name = "Ericom Connect Admin Web Service"
             ProductId = "{461BDB69-781C-4183-87D0-F3C06BA9D607}"
             Arguments = "/silent"
-            DependsOn = "[Script] DownloadAdminWebServiceMSI"
+            DependsOn = "[Script]DownloadAdminWebServiceMSI"
         }
 
 	    Script DownloadClientWebServiceMSI
@@ -450,7 +448,7 @@ configuration RDSDeployment
             Name = "Ericom Connect Client Web Service"
             ProductId = "{AAD4F30B-9BCE-4D61-9234-B5B6E3915905}"
             Arguments = "/silent"
-            DependsOn = "[Script] DownloadClientWebServiceMSI"
+            DependsOn = "[Script]DownloadClientWebServiceMSI"
         }
 
 
