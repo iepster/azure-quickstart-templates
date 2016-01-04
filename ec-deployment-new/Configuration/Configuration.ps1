@@ -345,6 +345,7 @@ configuration RDSDeployment
       
         }
 		
+        
         Package InstallSQLMSI
         {
             Ensure = "Present" 
