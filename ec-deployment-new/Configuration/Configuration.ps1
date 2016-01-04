@@ -36,11 +36,6 @@ configuration DomainJoin
    }
 }
 
-
-
-
-
-
 configuration Gateway
 {
    param 
@@ -190,8 +185,8 @@ configuration SessionHost
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectDataGrid_x64.msi"
-            Name = "Ericom Connect"
-            ProductId = ""
+            Name = "Ericom Connect Data Grid"
+            ProductId = "E6923378-7F98-470D-A831-F0C4B214AA1B"
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
             DependsOn = "[Script]DownloadGridMSI"
         }
@@ -214,7 +209,7 @@ configuration SessionHost
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectRemoteAgentClient_x64.msi"
-            Name = "Ericom Connect Agent Client"
+            Name = "Ericom Connect Remote Agent Client"
             ProductId = ""
             Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
             DependsOn = "[Script]DownloadRemoteAgentMSI"
@@ -227,7 +222,7 @@ configuration SessionHost
             }
             SetScript ={
                 $source = "https://download.ericom.com/public/file/ww2wz-NYAkSUE9KqU4IYLQ/EricomAccessServer64.msi"
-                $dest = "C:\ EricomAccessServer64.msi"
+                $dest = "C:\EricomAccessServer64.msi"
                 Invoke-WebRequest $source -OutFile $dest
             }
             GetScript = {@{Result = "DownloadAccessServerMSI"}}
@@ -237,20 +232,14 @@ configuration SessionHost
         Package InstallAccessServerMSI
         {
             Ensure = "Present" 
-            Path  = "C:\ EricomAccessServer64.msi"
+            Path  = "C:\EricomAccessServer64.msi"
             Name = "Ericom Access Server"
             ProductId = ""
             Arguments = "/silent"
             DependsOn = "[Script]DownloadAccessServerMSI"
-        }
-
-	
-	
+        }	
     }
-
 }
-
-
 
 
 configuration RDSDeployment
