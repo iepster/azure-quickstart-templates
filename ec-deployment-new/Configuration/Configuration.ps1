@@ -423,9 +423,9 @@ configuration RDSDeployment
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectAdminWebService.msi"
-            Name = "Ericom Connect"
-            ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Name = "Ericom Connect Admin Web Service"
+            ProductId = "{461BDB69-781C-4183-87D0-F3C06BA9D607}"
+            Arguments = "/silent"
             DependsOn = "[Script] DownloadAdminWebServiceMSI"
         }
 
@@ -447,9 +447,9 @@ configuration RDSDeployment
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectClientWebService.msi"
-            Name = "Ericom Connect"
-            ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Name = "Ericom Connect Client Web Service"
+            ProductId = "{AAD4F30B-9BCE-4D61-9234-B5B6E3915905}"
+            Arguments = "/silent"
             DependsOn = "[Script] DownloadClientWebServiceMSI"
         }
 
