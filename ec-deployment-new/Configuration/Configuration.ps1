@@ -370,7 +370,7 @@ configuration RDSDeployment
             }
             SetScript ={
                 $source = "https://download.ericom.com/public/file/eV4Ahpl_P0Sktt_rLDE_2w/EricomConnectDataGrid_x64_WT.msi"
-                $dest = "C:\EricomConnectDataGrid_x64_WT"
+                $dest = "C:\EricomConnectDataGrid_x64_WT.msi"
                 Invoke-WebRequest $source -OutFile $dest
             }
             GetScript = {@{Result = "DownloadGridMSI"}}
@@ -380,7 +380,7 @@ configuration RDSDeployment
         Package InstallGridMSI
         {
             Ensure = "Present" 
-            Path  = "C:\EricomConnectDataGrid_x64_WT"
+            Path  = "C:\EricomConnectDataGrid_x64_WT.msi"
             Name = "Ericom Connect Data Grid"
             ProductId = "E94F3137-AD33-434F-94B1-D34E12C02064"
             Arguments = ""
