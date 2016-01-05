@@ -114,7 +114,7 @@ configuration Gateway
       
         }
 		
-        Package InstallGridMSI
+        Package InstallSecureGatewayMSI
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectSecureGateway"
