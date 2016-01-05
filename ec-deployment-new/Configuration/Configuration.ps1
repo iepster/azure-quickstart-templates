@@ -150,7 +150,6 @@ configuration SessionHost
         [String]$tenant
     ) 
 
-    Import-DscResource -ModuleName xActiveDirectory, xComputerManagement
 
     Node localhost
     {
@@ -193,11 +192,7 @@ configuration SessionHost
             Path  = "C:\EricomConnectDataGrid_x64.msi"
             Name = "Ericom Connect Data Grid"
             ProductId = "E94F3137-AD33-434F-94B1-D34E12C02064"
-<<<<<<< HEAD
-            Arguments = "/quite /LAUNCH_CONFIG_TOOL=False"
-=======
             Arguments = ""
->>>>>>> origin/EricomConnect
             DependsOn = "[Script]DownloadGridMSI"
         }
         
