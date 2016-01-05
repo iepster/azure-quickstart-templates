@@ -433,7 +433,7 @@ configuration RDSDeployment
             Ensure = "Present" 
             Path  = "C:\EricomConnectAdminWebService.msi"
             Name = "Ericom Connect Admin Web Service"
-            ProductId = "461BDB69-781C-4183-87D0-F3C06BA9D607"
+            ProductId = "2048FBD6-BDC3-46E8-8018-61DDDC7F7623"
             Arguments = ""
             LogPath = "C:\log-ecaws.txt"
             DependsOn = "[Script]DownloadAdminWebServiceMSI"
