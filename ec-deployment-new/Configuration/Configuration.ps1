@@ -61,6 +61,7 @@ configuration Gateway
         [String]$tenant
     ) 
 
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement
 
     Node localhost
     {
@@ -94,9 +95,10 @@ configuration Gateway
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectDataGrid_x64_WT.msi"
-            Name = "Ericom Connect"
-            ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Name = "Ericom Connect Data Grid"
+            ProductId = "E94F3137-AD33-434F-94B1-D34E12C02064"
+            Arguments = ""
+            LogPath = "C:\log-ecdg.txt"
             DependsOn = "[Script]DownloadGridMSI"
         }
 
@@ -107,7 +109,7 @@ configuration Gateway
             }
             SetScript ={
                 $source = "https://download.ericom.com/public/file/SkL3cdmCG0uy4x_3-2BFTg/EricomConnectSecureGateway.msi"
-                $dest = "C:\EricomConnectSecureGateway"
+                $dest = "C:\EricomConnectSecureGateway.msi"
                 Invoke-WebRequest $source -OutFile $dest
             }
             GetScript = {@{Result = "DownloadSecureGatewayMSI"}}
@@ -117,10 +119,11 @@ configuration Gateway
         Package InstallSecureGatewayMSI
         {
             Ensure = "Present" 
-            Path  = "C:\EricomConnectSecureGateway"
-            Name = "Ericom Connect"
-            ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Path  = "C:\EricomConnectSecureGateway.msi"
+            Name = "Ericom Connect Secure Gateway"
+            ProductId = "D52E3491-F0FC-4067-BBC4-F567C2D4CEF5"
+            Arguments = ""
+            LogPath = "C:\log-ecsg.txt"
             DependsOn = "[Script]DownloadSecureGatewayMSI"
         }
 
@@ -193,6 +196,7 @@ configuration SessionHost
             Name = "Ericom Connect Data Grid"
             ProductId = "E94F3137-AD33-434F-94B1-D34E12C02064"
             Arguments = ""
+            LogPath = "C:\log-ecdg.txt"
             DependsOn = "[Script]DownloadGridMSI"
         }
         
@@ -217,6 +221,7 @@ configuration SessionHost
             Name = "Ericom Connect Remote Agent Client"
             ProductId = "91D821BA-94CA-4383-B5D8-709239F39553"
             Arguments = ""
+            LogPath = "C:\log-ecrac.txt"
             DependsOn = "[Script]DownloadRemoteAgentMSI"
         }
 
@@ -241,6 +246,7 @@ configuration SessionHost
             Name = "Ericom Access Server"
             ProductId = "F340EF5E-D4D8-4FB8-AE87-11459D65ED7F"
             Arguments = ""
+            LogPath = "C:\log-eas.txt"
             DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
@@ -353,6 +359,7 @@ configuration RDSDeployment
             Name = "Ericom Connect SQL Express"
             ProductId = ""
             Arguments = '/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled'
+            LogPath = "C:\log-sqlexpr.txt"
             DependsOn = "[Script]DownloadSQLMSI"
         }
 
@@ -375,8 +382,9 @@ configuration RDSDeployment
             Ensure = "Present" 
             Path  = "C:\EricomConnectDataGrid_x64_WT"
             Name = "Ericom Connect Data Grid"
-            ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            ProductId = "E94F3137-AD33-434F-94B1-D34E12C02064"
+            Arguments = ""
+            LogPath = "C:\log-ecdg.txt"
             DependsOn = "[Script]DownloadGridMSI"
         }
 	
@@ -400,7 +408,8 @@ configuration RDSDeployment
             Path  = "C:\EricomConnectProcessingUnitServer.msi"
             Name = "Ericom Connect Processing Unit"
             ProductId = ""
-            Arguments = "/silent /LAUNCH_CONFIG_TOOL=False"
+            Arguments = ""
+            LogPath = "C:\log-ecpus.txt"
             DependsOn = "[Script]DownloadProcessingUnitServerMSI"
         }
 
@@ -425,7 +434,8 @@ configuration RDSDeployment
             Path  = "C:\EricomConnectAdminWebService.msi"
             Name = "Ericom Connect Admin Web Service"
             ProductId = "{461BDB69-781C-4183-87D0-F3C06BA9D607}"
-            Arguments = "/silent"
+            Arguments = ""
+            LogPath = "C:\log-ecaws.txt"
             DependsOn = "[Script]DownloadAdminWebServiceMSI"
         }
 
@@ -449,7 +459,8 @@ configuration RDSDeployment
             Path  = "C:\EricomConnectClientWebService.msi"
             Name = "Ericom Connect Client Web Service"
             ProductId = "{AAD4F30B-9BCE-4D61-9234-B5B6E3915905}"
-            Arguments = "/silent"
+            Arguments = ""
+            LogPath = "C:\log-eccws.txt"
             DependsOn = "[Script]DownloadClientWebServiceMSI"
         }
 
