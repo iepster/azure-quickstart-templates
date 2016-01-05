@@ -406,7 +406,7 @@ configuration RDSDeployment
         {
             Ensure = "Present" 
             Path  = "C:\EricomConnectProcessingUnitServer.msi"
-            Name = "Ericom Connect Processing Unit"
+            Name = "Ericom Connect Processing Unit Server"
             ProductId = "4D24EBBE-380B-4E7D-8F1A-C1AD5B236E03"
             Arguments = ""
             LogPath = "C:\log-ecpus.txt"
