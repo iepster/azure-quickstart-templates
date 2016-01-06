@@ -75,6 +75,7 @@
         "publicIpRef": "publicIp",
 	"ecGridname" : "ecgrid",
 	"sqlserver" : "localhost",
+    "sqldatabase" : "ConnectDB",
 	"sqluser"  : "sa",
 	"sqlpassword" : "sapass"
     },
@@ -461,44 +462,8 @@
                         }
                     ]
                 }
-            },
-            "resources": [
-                {
-                    "apiVersion": "2015-05-01-preview",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "gw-vm/gateway",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', 'gw-vm')]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.8",
-                        "settings": {
-                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                            "ConfigurationFunction": "Configuration.ps1\\Gateway",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
- 				    
-                                },
-  				      "gridName": "[variables('ecGridname')]",
-				      "LUS": "broker.test.local",
-				      "tenant": "a"
-
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
-                }
-            ]
+            }
+            
         },
 
         {
@@ -547,46 +512,8 @@
                         }
                     ]
                 }
-            },
-            "resources": [
-                {
-                    "apiVersion": "2015-05-01-preview",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat('rdsh-', copyindex(),'/sessionhost')]",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdsh-', copyindex()))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.8",
-                        "settings": {
-                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                            "ConfigurationFunction": "Configuration.ps1\\SessionHost",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                },
- 				  "gridName": "[variables('ecGridname')]",
-				  "LUS": "broker.test.local",
-				  "tenant": "b"
-
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
-                }
-            ]
+            }
         },
-
-
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Compute/virtualMachines",
@@ -632,49 +559,123 @@
                         }
                     ]
                 }
-            }
+            },
+            "resources": [
+                 {
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "cb-vm/rdsdeployment",
+                    "apiVersion": "2015-05-01-preview",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', 'cb-vm')]"
+                    ],
+                    "properties": {
+                                "publisher": "Microsoft.Powershell",
+                                "type": "DSC",
+                                "typeHandlerVersion": "2.8",
+                                "settings": {
+                                    "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
+                                    "ConfigurationFunction": "Configuration.ps1\\RDSDeployment",
+                                    "Properties": {
+                                        "domainName": "[parameters('domainName')]",
+                                        "adminCreds": {
+                                            "UserName": "[parameters('adminUsername')]",
+                                            "Password": "PrivateSettingsRef:adminPassword"
+                                                    },
+                                        "connectionBroker": "[concat('broker.',parameters('domainName'))]",
+                                        "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
+                                        "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
+                                        "sessionHostNamingPrefix": "rdsh-",
+                                        "numberOfRdshInstances": "[parameters('numberOfRdshInstances')]",
+                            "gridName": "[variables('ecGridname')]",
+                            "sqlserver": "[variables('sqlserver')]",
+                            "sqldatabase": "[variables('sqldatabase')]",
+                            "sqluser": "[variables('sqluser')]",
+                            "sqlpassword": "[variables('sqlpassword')]"
+                                    }
+                             },
+                            "protectedSettings": {
+                                "Items": {
+                                    "adminPassword": "[parameters('adminPassword')]"
+                                }
+                            }
+                 }
+              }
+            ]
         },
+        
+        
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "cb-vm/rdsdeployment",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "Microsoft.Compute/virtualMachines/gw-vm/extensions/gateway",
-                "rdsh-vm-loop"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.8",
-                "settings": {
-                    "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                    "ConfigurationFunction": "Configuration.ps1\\RDSDeployment",
-                    "Properties": {
-                        "domainName": "[parameters('domainName')]",
-                        "adminCreds": {
-                            "UserName": "[parameters('adminUsername')]",
-                            "Password": "PrivateSettingsRef:adminPassword"
-                        },
-                        "connectionBroker": "[concat('broker.',parameters('domainName'))]",
-                        "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
-                        "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
-                        "sessionHostNamingPrefix": "rdsh-",
-                        "numberOfRdshInstances": "[parameters('numberOfRdshInstances')]",
-			 "gridName": "[variables('ecGridname')]",
-			 "sqlserver": "[variables('sqlserver')]",
-			 "sqluser": "[variables('sqluser')]",
-			 "sqlpassword": "[variables('sqlpassword')]"
+                    "apiVersion": "2015-05-01-preview",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat('rdsh-', copyindex(),'/sessionhost')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdsh-', copyindex()))]",
+                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.8",
+                        "settings": {
+                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
+                            "ConfigurationFunction": "Configuration.ps1\\SessionHost",
+                            "Properties": {
+                                "DomainName": "[parameters('domainName')]",
+                                "AdminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+                                },
+ 				  "gridName": "[variables('ecGridname')]",
+				  "LUS": "broker.test.local",
+				  "tenant": "b"
 
+                            }
+                        },
+                        "protectedSettings": {
+                            "Items": {
+                                "AdminPassword": "[parameters('adminPassword')]"
+                            }
+                        }
                     }
                 },
-                "protectedSettings": {
-                    "Items": {
-                        "adminPassword": "[parameters('adminPassword')]"
+                {
+                    "apiVersion": "2015-05-01-preview",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "gw-vm/gateway",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', 'gw-vm')]",
+                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.8",
+                        "settings": {
+                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
+                            "ConfigurationFunction": "Configuration.ps1\\Gateway",
+                            "Properties": {
+                                "DomainName": "[parameters('domainName')]",
+                                "AdminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+ 				    
+                                },
+  				      "gridName": "[variables('ecGridname')]",
+				      "LUS": "broker.test.local",
+				      "tenant": "a"
+
+                            }
+                        },
+                        "protectedSettings": {
+                            "Items": {
+                                "AdminPassword": "[parameters('adminPassword')]"
+                            }
+                        }
                     }
                 }
-            }
-        }
 
     ]
 }
