@@ -282,11 +282,17 @@ configuration RDSDeployment
         [Int]$numberOfRdshInstances = 1,
         [String]$sessionHostNamingPrefix = "SessionHost-",
 
-        # Collection Name
-        [String]$collectionName,
+        # Grid Name
+        [String]$gridName,
 
-        # Connection Description
-        [String]$collectionDescription
+        # sql server 
+        [String]$sqlserver
+        
+         # sql user 
+        [String]$sqluser
+        
+         # sql password 
+        [String]$sqlpassword
 
     ) 
 
