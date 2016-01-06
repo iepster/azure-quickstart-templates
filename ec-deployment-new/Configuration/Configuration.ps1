@@ -286,10 +286,10 @@ configuration RDSDeployment
         [String]$gridName,
 
         # sql server 
-        [String]$sqlserver
+        [String]$sqlserver,
         
          # sql user 
-        [String]$sqluser
+        [String]$sqluser,
         
          # sql password 
         [String]$sqlpassword
