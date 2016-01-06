@@ -611,7 +611,7 @@
                     "name": "rdsh-0/sessionhost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdsh-', copyindex()))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', 'rdsh-0')]",
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
                     ],
                     "properties": {
