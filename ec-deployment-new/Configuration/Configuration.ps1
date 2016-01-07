@@ -360,18 +360,7 @@ configuration RDSDeployment
       
         }
 		
-        
-        Package InstallSQLMSI
-        {
-            Ensure = "Present" 
-            Path  = "C:\SQLEXPR_x64_ENU.exe"
-            Name = "Ericom Connect SQL Express"
-            ProductId = ""
-            Arguments = '/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled'
-            LogPath = "C:\log-sqlexpr.txt"
-            DependsOn = "[Script]DownloadSQLMSI"
-        }
-
+             
 	    Script DownloadGridMSI
         {
             TestScript = {
