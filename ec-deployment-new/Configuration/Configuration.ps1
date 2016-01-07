@@ -355,18 +355,25 @@ configuration RDSDeployment
       
         }
 		
-        WindowsProcess ExtractSql
-        {
-            Path = "C:\SQLEXPR_x64_ENU.exe"
-            Arguments = "/q /x:C:\SQLEXPR_x64_ENU"
-        }
-        
 	   WindowsFeature installdotNet35 
 	   {             
 		    Ensure = "Present"
 		    Name = "Net-Framework-Core"
 		    Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
 	   }
+       
+       Script ExtractSQLInstaller
+        {
+            TestScript = {
+                Test-Path "C:\SQLEXPR_x64_ENU\"
+            }
+            SetScript ={
+                $dest = "C:\SQLEXPR_x64_ENU.exe"
+                $arguments = '/q /x:C:\SQLEXPR_x64_ENU'
+                $exitCode = (Start-Process -Filepath "$dest" -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+            }
+            GetScript = {@{Result = "ExtractSQLInstaller"}}      
+        }
 
         xSqlServerInstall installSqlServer
         {

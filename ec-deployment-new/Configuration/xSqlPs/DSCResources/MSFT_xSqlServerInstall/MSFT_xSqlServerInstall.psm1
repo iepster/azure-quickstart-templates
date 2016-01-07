@@ -151,7 +151,7 @@ function Set-TargetResource
     try
     {        
         # SQL Server log folder
-        $LogPath = Join-Path $env:ProgramFiles "Microsoft SQL Server\110\Setup Bootstrap\Log"        
+        $LogPath = Join-Path $env:ProgramFiles "Microsoft SQL Server\120\Setup Bootstrap\Log"        
         $sqlLog = Get-Content "$LogPath\summary.txt"
         if($sqlLog -ne $null)
         {
