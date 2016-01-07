@@ -296,7 +296,7 @@ configuration RDSDeployment
 
     ) 
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement, xRemoteDesktopSessionHost
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement, xRemoteDesktopSessionHost, xSqlPs
 
    
     $localhost = [System.Net.Dns]::GetHostByName((hostname)).HostName
@@ -304,6 +304,8 @@ configuration RDSDeployment
     $username = $adminCreds.UserName -split '\\' | select -last 1
     $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $adminCreds.Password)
 
+    $securePassword = ConvertTo-SecureString -String "W.A.Mozart35!!!" -AsPlainText -Force
+    $credential = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $securePassword)
 
     if (-not $connectionBroker)   { $connectionBroker = $localhost }
     if (-not $webAccessServer)    { $webAccessServer  = $localhost }
@@ -336,14 +338,7 @@ configuration RDSDeployment
             adminCreds = $adminCreds 
         }
 	
-	   WindowsFeature installdotNet35 
-	   {             
-		    Ensure = "Present"
-		    Name = "Net-Framework-Core"
-		    Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
-	   }      	
-	
-	   Script DownloadSQLMSI
+       Script DownloadSQLMSI
        {
             TestScript = {
                 Test-Path "C:\SQLEXPR_x64_ENU.exe"
@@ -357,16 +352,25 @@ configuration RDSDeployment
       
         }
 		
-        
-        Package InstallSQLMSI
+        WindowsProcess ExtractSql
         {
-            Ensure = "Present" 
-            Path  = "C:\SQLEXPR_x64_ENU.exe"
-            Name = "Ericom Connect SQL Express"
-            ProductId = ""
-            Arguments = '/Q /ACTION=Install /FEATURES=SQL /INSTANCENAME=EricomConnectDB /IACCEPTSQLSERVERLICENSETERMS /SECURITYMODE=SQL /SAPWD=W.A.Mozart35!!! /ADDCURRENTUSERASSQLADMIN /SQLSVCACCOUNT="NT AUTHORITY\Network Service" /AGTSVCACCOUNT="NT AUTHORITY\Network Service" /BROWSERSVCSTARTUPTYPE=Disabled'
-            LogPath = "C:\log-sqlexpr.txt"
-            DependsOn = "[Script]DownloadSQLMSI"
+            Path = "C:\SQLEXPR_x64_ENU.exe"
+            Arguments = "/q /x:C:\SQLEXPR_x64_ENU"
+        }
+        
+	   WindowsFeature installdotNet35 
+	   {             
+		    Ensure = "Present"
+		    Name = "Net-Framework-Core"
+		    Source = "\\neuromancer\Share\Sources_sxs\?Win2012R2"
+	   }
+
+        xSqlServerInstall installSqlServer
+        {
+            InstanceName = "ERICOMCONNECTDB"
+            SourcePath = "C:\SQLEXPR_x64_ENU"
+            Features= "SQLEngine"
+            SqlAdministratorCredential = $credential
         }
 
 	    Script DownloadGridMSI
