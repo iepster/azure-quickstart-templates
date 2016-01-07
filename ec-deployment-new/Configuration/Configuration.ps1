@@ -288,6 +288,9 @@ configuration RDSDeployment
         # sql server 
         [String]$sqlserver,
         
+        # sql database
+        [String]$sqldatabase,
+        
          # sql user 
         [String]$sqluser,
         
