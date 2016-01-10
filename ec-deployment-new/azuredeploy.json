@@ -606,7 +606,7 @@
                     "name": "[concat('rdsh-', copyindex(),'/sessionhost')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        ["rdsh-vm-loop"],
+                        "rdsh-vm-loop",
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
                     ],
                     "properties": {
