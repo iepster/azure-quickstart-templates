@@ -18,7 +18,7 @@
     "numberOfRdshInstances": {
       "value": 1
     },
-    "publicDnsName": {
+    "dnsLabelPrefix": {
       "value": "GEN-UNIQUE"
     }
   }
