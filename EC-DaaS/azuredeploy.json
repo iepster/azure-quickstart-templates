@@ -641,6 +641,7 @@
                     "name": "[concat('rdshA-', copyindex(),'/ApplicationHost')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdshA-', copyindex()))]",
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
                     ],
                     "properties": {
