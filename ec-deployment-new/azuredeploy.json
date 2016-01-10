@@ -92,7 +92,7 @@
         {
             "apiVersion": "[variables('apiVersion')]",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('StorageAccountName')]",
+            "name": "[variables('StorageAccountName')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "accountType": "Standard_LRS"
@@ -210,7 +210,7 @@
             "name": "dc-vm",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts',parameters('StorageAccountName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('StorageAccountName'))]",
                 "[resourceId('Microsoft.Network/networkInterfaces','dc-nif')]"
             ],
             "properties": {
@@ -232,7 +232,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-os-disk.vhd')]"
+                            "uri": "[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-os-disk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -241,7 +241,7 @@
                         {
                             "name": "dc-vm-data-disk",
                             "vhd": {
-                                "Uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-data-disk.vhd')]"
+                                "Uri": "[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-data-disk.vhd')]"
                             },
                             "caching": "None",
                             "createOption": "Empty",
@@ -418,7 +418,7 @@
             "name": "gw-vm",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', 'availabilityset')]",
                 "Microsoft.Network/networkInterfaces/gw-nif"
             ],
@@ -444,7 +444,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/gw-vm-osdisk.vhd')]"
+                            "uri": "[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/gw-vm-osdisk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -471,7 +471,7 @@
                 "count": "[parameters('numberOfRdshInstances')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', 'rdsh-', copyindex(), '-nif')]"
 
             ],
@@ -494,7 +494,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/rdsh-',copyindex(),'-osdisk.vhd')]"
+                            "uri": "[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/rdsh-',copyindex(),'-osdisk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -515,7 +515,7 @@
             "name": "cb-vm",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('StorageAccountName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', 'availabilityset')]",
                 "Microsoft.Network/networkInterfaces/cb-nif"
             ],
@@ -541,7 +541,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/cb-vm-osdisk.vhd')]"
+                            "uri": "[concat('http://',variables('StorageAccountName'),'.blob.core.windows.net/vhds/cb-vm-osdisk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
