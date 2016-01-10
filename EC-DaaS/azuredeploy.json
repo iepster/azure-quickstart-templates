@@ -593,7 +593,7 @@
                     "name": "[concat('rdshD-', copyindex(),'/DesktopHost')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdshA-', copyindex()))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdshD-', copyindex()))]",
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
                     ],
                     "properties": {
