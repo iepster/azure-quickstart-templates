@@ -41,7 +41,7 @@ configuration DomainJoin
 
 
 
-configuration Gateway
+configuration GatewaySetup
 {
    param 
     ( 
@@ -127,6 +127,38 @@ configuration Gateway
             DependsOn = "[Script]DownloadSecureGatewayMSI"
         }
 
+
+    }
+}
+configuration GatewayECConfig
+{
+   param 
+    ( 
+        [Parameter(Mandatory)]
+        [String]$domainName,
+
+        [Parameter(Mandatory)]
+        [PSCredential]$adminCreds,
+		
+		[Parameter(Mandatory)]
+        [String]$gridName,
+		
+		[Parameter(Mandatory)]
+        [String]$LUS,
+		
+		[Parameter(Mandatory)]
+        [String]$tenant
+    ) 
+
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement
+
+    Node localhost
+    {
+        LocalConfigurationManager
+        {
+            RebootNodeIfNeeded = $true
+            ConfigurationMode = "ApplyOnly"
+        }
 
     }
 }
