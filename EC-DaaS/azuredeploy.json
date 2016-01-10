@@ -585,7 +585,44 @@
                         }
                     ]
                 }
-            }
+            },
+             "resources": [
+                        {
+                    "apiVersion": "[variables('apiVersion')]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat('rdshD-', copyindex(),'/DesktopHost')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat('rdshA-', copyindex()))]",
+                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.8",
+                        "settings": {
+                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
+                            "ConfigurationFunction": "Configuration.ps1\\DesktopHost",
+                            "Properties": {
+                                "DomainName": "[parameters('domainName')]",
+                                "AdminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+                                },
+ 				            "gridName": "[variables('ecGridname')]",
+				            "LUS": "broker.DaaS.local",
+				            "tenant": "root"
+
+                            }
+                        },
+                        "protectedSettings": {
+                            "Items": {
+                                "AdminPassword": "[parameters('adminPassword')]"
+                            }
+                        }
+                    }
+                } 
+             ]
         },
          {
             "apiVersion": "[variables('apiVersion')]",
@@ -760,41 +797,7 @@
         },
         
         
-        {
-                    "apiVersion": "[variables('apiVersion')]",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "rdshD-0/DesktopHost",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "rdshD-vm-loop",
-                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.8",
-                        "settings": {
-                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                            "ConfigurationFunction": "Configuration.ps1\\DesktopHost",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                },
- 				  "gridName": "[variables('ecGridname')]",
-				  "LUS": "broker.DaaS.local",
-				  "tenant": "root"
-
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
-                } 
+ 
 
     ]
 }
