@@ -590,7 +590,7 @@
          {
             "apiVersion": "[variables('apiVersion')]",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat('rdshA-', copyindex())]",
+            "name": "[concat('rdshA-', copyindex(), 'VM')]",
             "location": "[resourceGroup().location]",
             "copy": {
                 "name": "rdshA-vm-loop",
@@ -638,7 +638,7 @@
                {
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat('rdshA-', copyindex())]/ApplicationHost",
+                    "name": "[concat('rdshA-', copyindex(),'/ApplicationHost')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
