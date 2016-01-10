@@ -608,10 +608,10 @@
         {
                     "apiVersion": "2015-05-01-preview",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "rdsh-0/sessionhost",
+                    "name": "[concat('rdsh-', copyindex(),'/sessionhost')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', 'rdsh-0')]",
+                        ["rdsh-vm-loop"],
                         "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
                     ],
                     "properties": {
