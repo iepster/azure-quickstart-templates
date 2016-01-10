@@ -484,7 +484,7 @@
                                  },		
    				      "gridName": "[variables('ecGridname')]",		
  				      "LUS": "broker.test.local",		
- 				      "tenant": "a"		
+ 				      "tenant": "root"		
  		
                              }		
                          },		
@@ -641,7 +641,7 @@
         {
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "rdsh/sessionhost",
+                    "name": "rdsh-0/sessionhost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdsh-vm-loop",
@@ -662,7 +662,7 @@
                                 },
  				  "gridName": "[variables('ecGridname')]",
 				  "LUS": "broker.test.local",
-				  "tenant": "b"
+				  "tenant": "root"
 
                             }
                         },
