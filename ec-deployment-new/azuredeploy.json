@@ -603,7 +603,7 @@
         {
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat('rdsh-', copyindex(),'/sessionhost')]",
+                    "name": "rdsh/sessionhost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdsh-vm-loop",
