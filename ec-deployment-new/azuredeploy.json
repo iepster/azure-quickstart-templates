@@ -672,43 +672,8 @@
                             }
                         }
                     }
-                },
-                {
-                    "apiVersion": "[variables('apiVersion')]",
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "gw-vm/GatewayECConfig",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', 'gw-vm')]",
-                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.8",
-                        "settings": {
-                            "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                            "ConfigurationFunction": "Configuration.ps1\\GatewayECConfig",
-                            "Properties": {
-                                "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
- 				    
-                                },
-  				      "gridName": "[variables('ecGridname')]",
-				      "LUS": "broker.test.local",
-				      "tenant": "a"
-
-                            }
-                        },
-                        "protectedSettings": {
-                            "Items": {
-                                "AdminPassword": "[parameters('adminPassword')]"
-                            }
-                        }
-                    }
                 }
+             
 
     ]
 }
