@@ -726,7 +726,7 @@
         {
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "Desktop/DesktopHost",
+                    "name": "rdshD-0/DesktopHost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdshD-vm-loop",
@@ -761,7 +761,7 @@
            ,{
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "rdshA/ApplicationHost",
+                    "name": "rdshA-0/ApplicationHost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdshA-vm-loop",
