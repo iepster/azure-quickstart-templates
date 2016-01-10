@@ -10,13 +10,6 @@
                 "description": "Unique public DNS prefix for the deployment. The fqdn will look something like '<dnsname>.westus.cloudapp.azure.com'. Up to 62 chars, digits or dashes, lowercase, should start with a letter: must conform to '^[a-z][a-z0-9-]{1,61}[a-z0-9]$'."
             }
         },
-        "newStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Storage Account. This has to be a uinique name, up to 24 chars, all lowercase."
-            }
-        },
-
         "domainName": {
             "type": "string",
             "defaultValue": "test.local",
@@ -63,6 +56,7 @@
     },
 
     "variables": {
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'RDS', 'Storage')]",
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
         "imageSKU": "2012-R2-Datacenter",
@@ -97,7 +91,7 @@
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('newStorageAccountName')]",
+            "name": "[parameters('StorageAccountName')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "accountType": "Standard_LRS"
@@ -215,7 +209,7 @@
             "name": "dc-vm",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts',parameters('newStorageAccountName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts',parameters('StorageAccountName'))]",
                 "[resourceId('Microsoft.Network/networkInterfaces','dc-nif')]"
             ],
             "properties": {
@@ -237,7 +231,7 @@
                     "osDisk": {
                         "name": "osdisk",
                         "vhd": {
-                            "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-os-disk.vhd')]"
+                            "uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-os-disk.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -246,7 +240,7 @@
                         {
                             "name": "dc-vm-data-disk",
                             "vhd": {
-                                "Uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-data-disk.vhd')]"
+                                "Uri": "[concat('http://',parameters('StorageAccountName'),'.blob.core.windows.net/vhds/dc-vm-data-disk.vhd')]"
                             },
                             "caching": "None",
                             "createOption": "Empty",

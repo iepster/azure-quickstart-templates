@@ -14,9 +14,7 @@
     "domainName": {
       "value": "test.local"
     },
-    "newStorageAccountName": {
-      "value": "storagedemo"
-    },
+    
     "numberOfRdshInstances": {
       "value": 1
     },
