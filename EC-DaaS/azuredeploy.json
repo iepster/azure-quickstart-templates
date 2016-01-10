@@ -590,7 +590,7 @@
          {
             "apiVersion": "[variables('apiVersion')]",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat('rdshA-', copyindex(), 'VM')]",
+            "name": "[concat('rdshA-', copyindex())]",
             "location": "[resourceGroup().location]",
             "copy": {
                 "name": "rdshA-vm-loop",
