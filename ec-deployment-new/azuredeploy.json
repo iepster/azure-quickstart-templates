@@ -612,7 +612,7 @@
                                     "Properties": {
                                         "domainName": "[parameters('domainName')]",
                                         "adminUser": "[parameters('adminUsername')]",
-                                        "adminPassword": "[parameters('adminPassword')]",
+                                        "adminPassword": "PrivateSettingsRef:adminPassword",
                                         "connectionBroker": "[concat('broker.',parameters('domainName'))]",
                                         "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
                                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
@@ -627,7 +627,7 @@
                              },
                             "protectedSettings": {
                                 "Items": {
-                                    "adminPassword": "[parameters('adminPassword')]"
+                                    "adminPassword": "PrivateSettingsRef:adminPassword"
                                 }
                             }
                  }
