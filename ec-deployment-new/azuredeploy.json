@@ -612,7 +612,7 @@
                                     "Properties": {
                                         "domainName": "[parameters('domainName')]",
                                         "adminUser": "[parameters('adminUsername')]",
-                                        "adminPassword": "PrivateSettingsRef:adminPassword",
+                                        "adminPassword": "[parameters('adminPassword')]",
                                         "connectionBroker": "[concat('broker.',parameters('domainName'))]",
                                         "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
                                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
@@ -643,7 +643,7 @@
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdsh-vm-loop",
-                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/rdsdeployment"
+                        "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Powershell",
@@ -654,14 +654,11 @@
                             "ConfigurationFunction": "Configuration.ps1\\ApplicationHost",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
-                                "AdminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "PrivateSettingsRef:AdminPassword"
-                                },
- 				  "gridName": "[variables('ecGridname')]",
-				  "LUS": "broker.test.local",
-				  "tenant": "root"
-
+                                "adminUser": "[parameters('adminUsername')]",
+                                "adminPassword": "[parameters('adminPassword')]",
+                                "gridName": "[variables('ecGridname')]",
+                                "LUS": "broker.test.local",
+                                "tenant": "root"
                             }
                         },
                         "protectedSettings": {
