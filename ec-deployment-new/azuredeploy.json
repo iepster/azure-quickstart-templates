@@ -272,7 +272,7 @@
                         "type": "DSC",
                         "typeHandlerVersion": "2.8",
                         "settings": {
-                            "ModulesUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/active-directory-new-domain/CreateADPDC.ps1.zip",
+                            "ModulesUrl": "[concat(parameters('assetLocation'),'/CreateADPDC.zip')]",
                             "ConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
@@ -596,7 +596,7 @@
             "resources": [
                  {
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "cb-vm/rdsdeployment",
+                    "name": "cb-vm/ericomconnectserversetup",
                     "apiVersion": "[variables('apiVersion')]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
@@ -608,13 +608,11 @@
                                 "typeHandlerVersion": "2.8",
                                 "settings": {
                                     "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                                    "ConfigurationFunction": "Configuration.ps1\\RDSDeployment",
+                                    "ConfigurationFunction": "Configuration.ps1\\EricomConnectServerSetup",
                                     "Properties": {
                                         "domainName": "[parameters('domainName')]",
-                                        "adminCreds": {
-                                            "UserName": "[parameters('adminUsername')]",
-                                            "Password": "PrivateSettingsRef:adminPassword"
-                                                    },
+                                        "adminUser": "[parameters('adminUsername')]",
+                                        "adminPassword": "PrivateSettingsRef:adminPassword",
                                         "connectionBroker": "[concat('broker.',parameters('domainName'))]",
                                         "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
                                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
@@ -641,7 +639,7 @@
         {
                     "apiVersion": "[variables('apiVersion')]",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "rdsh-0/sessionhost",
+                    "name": "rdsh-0/ApplicationHost",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "rdsh-vm-loop",
@@ -653,7 +651,7 @@
                         "typeHandlerVersion": "2.8",
                         "settings": {
                             "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
-                            "ConfigurationFunction": "Configuration.ps1\\SessionHost",
+                            "ConfigurationFunction": "Configuration.ps1\\ApplicationHost",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
                                 "AdminCreds": {

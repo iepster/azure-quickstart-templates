@@ -41,6 +41,8 @@ configuration DomainJoin
 
 
 
+
+
 configuration GatewaySetup
 {
    param 
@@ -130,7 +132,10 @@ configuration GatewaySetup
 
     }
 }
-configuration GatewayECConfig
+
+
+
+configuration ApplicationHost
 {
    param 
     ( 
@@ -138,7 +143,10 @@ configuration GatewayECConfig
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [PSCredential]$adminCreds,
+        [String]$adminUser,
+        
+        [Parameter(Mandatory)]
+        [String]$adminPassword,
 		
 		[Parameter(Mandatory)]
         [String]$gridName,
@@ -150,41 +158,9 @@ configuration GatewayECConfig
         [String]$tenant
     ) 
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement
-
-    Node localhost
-    {
-        LocalConfigurationManager
-        {
-            RebootNodeIfNeeded = $true
-            ConfigurationMode = "ApplyOnly"
-        }
-
-    }
-}
-
-
-
-configuration SessionHost
-{
-   param 
-    ( 
-        [Parameter(Mandatory)]
-        [String]$domainName,
-
-        [Parameter(Mandatory)]
-        [PSCredential]$adminCreds,
-		
-		[Parameter(Mandatory)]
-        [String]$gridName,
-		
-		[Parameter(Mandatory)]
-        [String]$LUS,
-		
-		[Parameter(Mandatory)]
-        [String]$tenant
-    ) 
-
+    $username = $adminUser
+    $sPassword = ConvertTo-SecureString -String "$adminPassword" -AsPlainText -Force
+    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $sPassword)
 
     Node localhost
     {
@@ -197,7 +173,7 @@ configuration SessionHost
         DomainJoin DomainJoin
         {
             domainName = $domainName 
-            adminCreds = $adminCreds 
+            adminCreds = $domainCreds 
         }
 
         WindowsFeature RDS-RD-Server
@@ -282,7 +258,69 @@ configuration SessionHost
             DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
-	
+	    Package vcRedist 
+        { 
+            Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
+            ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
+            Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
+            Arguments = "/install /passive /norestart" 
+        } 
+
+        Script JoinGridRemoteAgent
+        {
+            TestScript = {
+                $isRARunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectRemoteAgentService") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ECRAS service is running"
+                            $isRARunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ECRAS service is stopped"
+                            $isRARunning = $false;
+                        } else {
+                            $statusESG = $service.Status
+                            Write-Verbose "ECRAS status: $statusESG"
+                        }
+                    }
+                }
+                return ($isRARunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Remote Agent Client"
+                $configFile = "RemoteAgentConfigTool_4_5.exe"                
+
+                $_adminUser = "$Using:adminUser" + "@$domainName"
+                $_adminPass = "$Using:adminPassword"
+                $_gridName = $Using:gridName
+                $_hostOrIp = ""
+                $_saUser = $Using:sqluser
+                $_saPass = $Using:sqlpassword
+                $_databaseServer = $Using:sqlserver
+                $_databaseName = $Using:sqldatabase
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                $arguments = " connect /gridName `"$_gridName`" /myIP `"$env:COMPUTERNAME`" /lookupServiceHosts `"broker`""                
+
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Remote Agent has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Remote Agent could not be configured. Exit Code: " + $exitCode)
+                }                
+            }
+            GetScript = {@{Result = "JoinGridRemoteAgent"}}      
+        }
 	
     }
 
@@ -291,7 +329,7 @@ configuration SessionHost
 
 
 
-configuration RDSDeployment
+configuration EricomConnectServerSetup
 {
    param 
     ( 
@@ -299,7 +337,10 @@ configuration RDSDeployment
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [PSCredential]$adminCreds,
+        [String]$adminUser,
+        
+        [Parameter(Mandatory)]
+        [String]$adminPassword,
 
         # Connection Broker Node name
         [String]$connectionBroker,
@@ -336,11 +377,12 @@ configuration RDSDeployment
    
     $localhost = [System.Net.Dns]::GetHostByName((hostname)).HostName
 
-    $username = $adminCreds.UserName -split '\\' | select -last 1
-    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $adminCreds.Password)
+    $username = $adminUser
+    $sPassword = ConvertTo-SecureString -String "$adminPassword" -AsPlainText -Force
+    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $sPassword)
 
-    $securePassword = ConvertTo-SecureString -String "W.A.Mozart35!!!" -AsPlainText -Force
-    $credential = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $securePassword)
+    $securePassword = ConvertTo-SecureString -String "$sqlpassword" -AsPlainText -Force
+    $sqlcredential = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $securePassword)
 
     if (-not $connectionBroker)   { $connectionBroker = $localhost }
     if (-not $webAccessServer)    { $webAccessServer  = $localhost }
@@ -370,7 +412,7 @@ configuration RDSDeployment
         DomainJoin DomainJoin
         {
             domainName = $domainName 
-            adminCreds = $adminCreds 
+            adminCreds = $domainCreds 
         }
 	
        Script DownloadSQLMSI
@@ -412,7 +454,7 @@ configuration RDSDeployment
             InstanceName = "ERICOMCONNECTDB"
             SourcePath = "C:\SQLEXPR_x64_ENU"
             Features= "SQLEngine"
-            SqlAdministratorCredential = $credential
+            SqlAdministratorCredential = $sqlcredential
         }
 
 	    Script DownloadGridMSI
@@ -516,6 +558,63 @@ configuration RDSDeployment
             DependsOn = "[Script]DownloadClientWebServiceMSI"
         }
 
+        Script InitializeGrid
+        {
+            TestScript = {
+                $isServiceRunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectProcessingUnitServer") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ECPUS service is running"
+                            $isServiceRunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ECPUS service is stopped"
+                            $isServiceRunning = $false;
+                        } else {
+                            $statusESG = $service.Status
+                            Write-Verbose "ECPUS status: $statusESG"
+                        }
+                    }
+                }
+                return ($isServiceRunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Configuration Tool"
+                $configFile = "EricomConnectConfigurationTool.exe"
+                
+                #$credentials = $Using:adminCreds;
+                $_adminUser = "$Using:adminUser" + "@$domainName"
+                $_adminPass = "$Using:adminPassword"
+                $_gridName = $Using:gridName
+                $_hostOrIp = "$env:COMPUTERNAME"
+                $_saUser = $Using:sqluser
+                $_saPass = $Using:sqlpassword
+                $_databaseServer = $Using:sqlserver
+                $_databaseName = $Using:sqldatabase
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                Write-Verbose "Configuration mode: without windows credentials"
+                $arguments = " NewGrid /AdminUser `"$_adminUser`" /AdminPassword `"$_adminPass`" /GridName `"$_gridName`" /SaDatabaseUser `"$_saUser`" /SaDatabasePassword `"$_saPass`" /DatabaseServer `"$_databaseServer\$_databaseName`" /disconnect /noUseWinCredForDBAut"
+                
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Grid Server has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Grid Server could not be configured. Exit Code: " + $exitCode)
+                }
+                
+            }
+            GetScript = {@{Result = "InitializeGrid"}}      
+        }
 
     }
 }
