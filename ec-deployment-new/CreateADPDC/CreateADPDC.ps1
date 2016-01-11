@@ -91,7 +91,7 @@
 		$templateUser = "ericom"
 		$user = "demouser"
 		$pass = "Pa55w0rd"
-                New-ADUser -name "$user" -Instance (Get-ADUser $templateUser) -AccountPassword (ConvertTo-SecureString "$pass" -AsPlainText -Force) -ChangePasswordAtLogon $False -CannotChangePassword $True -Enabled $True -GivenName "$user" -SamAccountName "$user" -Surname ="$user" -UserPrincipalName ("$user" + "$domainSuffix)"
+                New-ADUser -name "$user" -Instance (Get-ADUser $templateUser) -AccountPassword (ConvertTo-SecureString "$pass" -AsPlainText -Force) -ChangePasswordAtLogon $False -CannotChangePassword $True -Enabled $True -GivenName "$user" -SamAccountName "$user" -Surname ="$user" -UserPrincipalName ("$user" + "$domainSuffix")
                 New-Item -Path "C:\aduserscreated" -ItemType Directory -Force 
             }
             GetScript = {@{Result = "CreateADUsers"}}
