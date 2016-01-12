@@ -143,10 +143,7 @@ configuration ApplicationHost
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [String]$adminUser,
-        
-        [Parameter(Mandatory)]
-        [String]$adminPassword,
+        [PSCredential]$adminCreds,
 		
 		[Parameter(Mandatory)]
         [String]$gridName,
@@ -158,9 +155,10 @@ configuration ApplicationHost
         [String]$tenant
     ) 
 
-    $username = $adminUser
-    $sPassword = ConvertTo-SecureString -String "$adminPassword" -AsPlainText -Force
-    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $sPassword)
+    $_adminUser = $adminCreds.UserName
+    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$_adminUser", $adminCreds.Password)
+    $_adminPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+    
 
     Node localhost
     {
@@ -295,14 +293,10 @@ configuration ApplicationHost
                 $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Remote Agent Client"
                 $configFile = "RemoteAgentConfigTool_4_5.exe"                
 
-                $_adminUser = "$Using:adminUser" + "@$domainName"
-                $_adminPass = "$Using:adminPassword"
+                $_adminUser = "$Using:_adminUser" + "@$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
                 $_gridName = $Using:gridName
-                $_hostOrIp = ""
-                $_saUser = $Using:sqluser
-                $_saPass = $Using:sqlpassword
-                $_databaseServer = $Using:sqlserver
-                $_databaseName = $Using:sqldatabase
+
 
                 $configPath = Join-Path $workingDirectory -ChildPath $configFile
                 
@@ -337,10 +331,7 @@ configuration EricomConnectServerSetup
         [String]$domainName,
 
         [Parameter(Mandatory)]
-        [String]$adminUser,
-        
-        [Parameter(Mandatory)]
-        [String]$adminPassword,
+        [PSCredential]$adminCreds,
 
         # Connection Broker Node name
         [String]$connectionBroker,
@@ -364,11 +355,9 @@ configuration EricomConnectServerSetup
         # sql database
         [String]$sqldatabase,
         
-         # sql user 
-        [String]$sqluser,
-        
-         # sql password 
-        [String]$sqlpassword
+         # sql credentials 
+        [Parameter(Mandatory)]
+        [PSCredential]$sqlCreds,
 
     ) 
 
@@ -377,12 +366,13 @@ configuration EricomConnectServerSetup
    
     $localhost = [System.Net.Dns]::GetHostByName((hostname)).HostName
 
-    $username = $adminUser
-    $sPassword = ConvertTo-SecureString -String "$adminPassword" -AsPlainText -Force
-    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $sPassword)
+    $_adminUser = $adminCreds.UserName
+    $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$_adminUser", $adminCreds.Password)
+    $_adminPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+    
 
-    $securePassword = ConvertTo-SecureString -String "$sqlpassword" -AsPlainText -Force
-    $sqlcredential = New-Object System.Management.Automation.PSCredential ("$domainName\$username", $securePassword)
+    $_sqlUser = $sqlCreds.UserName
+    $_sqlPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($sqlCreds.Password | ConvertFrom-SecureString)) ))
 
     if (-not $connectionBroker)   { $connectionBroker = $localhost }
     if (-not $webAccessServer)    { $webAccessServer  = $localhost }
@@ -454,7 +444,7 @@ configuration EricomConnectServerSetup
             InstanceName = "ERICOMCONNECTDB"
             SourcePath = "C:\SQLEXPR_x64_ENU"
             Features= "SQLEngine"
-            SqlAdministratorCredential = $sqlcredential
+            SqlAdministratorCredential = $sqlCreds
         }
 
 	    Script DownloadGridMSI
@@ -588,12 +578,12 @@ configuration EricomConnectServerSetup
                 $configFile = "EricomConnectConfigurationTool.exe"
                 
                 #$credentials = $Using:adminCreds;
-                $_adminUser = "$Using:adminUser" + "@$domainName"
-                $_adminPass = "$Using:adminPassword"
+                $_adminUser = "$Using:_adminUser" + "@$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
                 $_gridName = $Using:gridName
                 $_hostOrIp = "$env:COMPUTERNAME"
-                $_saUser = $Using:sqluser
-                $_saPass = $Using:sqlpassword
+                $_saUser = $Using:_sqlUser
+                $_saPass = $Using:_sqlPassword
                 $_databaseServer = $Using:sqlserver
                 $_databaseName = $Using:sqldatabase
 

@@ -52,12 +52,6 @@
             "metadata": {
                 "description": "The location of resources such as templates and DSC modules that the script is dependent"
             }
-        },
-        "configurationData": {
-            "type": "string",
-            "metadata": {
-                "description": "Escaped Json of DSC ConfigurationData"
-            }
         }
     },
 
@@ -285,8 +279,7 @@
                                 "AdminCreds": {
                                     "UserName": "[parameters('adminUsername')]",
                                     "Password": "PrivateSettingsRef:AdminPassword"
-                                },
-                                "ConfigurationData": "[parameters('configurationData')]"                                
+                                }                                
                             }
                         },
                         "protectedSettings": {
@@ -485,13 +478,11 @@
                                  "DomainName": "[parameters('domainName')]",		
                                  "AdminCreds": {		
                                      "UserName": "[parameters('adminUsername')]",		
-                                     "Password": "PrivateSettingsRef:AdminPassword"		
-  				    		
+                                     "Password": "PrivateSettingsRef:AdminPassword"
                                  },		
                                 "gridName": "[variables('ecGridname')]",		
                                 "LUS": "broker.test.local",		
-                                "tenant": "root",
-                                 "ConfigurationData": "[parameters('configurationData')]"
+                                "tenant": "root"
                              }		
                          },		
                          "protectedSettings": {		
@@ -617,8 +608,10 @@
                                     "ConfigurationFunction": "Configuration.ps1\\EricomConnectServerSetup",
                                     "Properties": {
                                         "domainName": "[parameters('domainName')]",
-                                        "adminUser": "[parameters('adminUsername')]",
-                                        "adminPassword": "PrivateSettingsRef:adminPassword",
+                                        "adminCreds": {
+                                            "UserName": "[parameters('adminUsername')]",
+                                            "Password": "PrivateSettingsRef:AdminPassword"
+                                        },
                                         "connectionBroker": "[concat('broker.',parameters('domainName'))]",
                                         "webAccessServer": "[concat('gateway.',parameters('domainName'))]",
                                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
@@ -627,14 +620,16 @@
                                         "gridName": "[variables('ecGridname')]",
                                         "sqlserver": "[variables('sqlserver')]",
                                         "sqldatabase": "[variables('sqldatabase')]",
-                                        "sqluser": "[variables('sqluser')]",
-                                        "sqlpassword": "[variables('sqlpassword')]",
-                                         "ConfigurationData": "[parameters('configurationData')]"
+                                        "sqlCreds": {
+                                            "UserName": "[parameters('sqluser')]",
+                                            "Password": "PrivateSettingsRef:SqlPassword"
+                                        }
                                     }
                              },
                             "protectedSettings": {
                                 "Items": {
-                                    "AdminPassword": "[parameters('adminPassword')]"
+                                    "AdminPassword": "[parameters('adminPassword')]",
+                                    "SqlPassword": "[parameters('sqlpassword')]"
                                 }
                             }
                  }
@@ -661,12 +656,13 @@
                             "ConfigurationFunction": "Configuration.ps1\\ApplicationHost",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
-                                "adminUser": "[parameters('adminUsername')]",
-                                "adminPassword": "PrivateSettingsRef:AdminPassword",
+                                "adminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+                                },
                                 "gridName": "[variables('ecGridname')]",
                                 "LUS": "broker.test.local",
-                                "tenant": "root",
-                                "ConfigurationData": "[parameters('configurationData')]"
+                                "tenant": "root"
                             }
                         },
                         "protectedSettings": {
