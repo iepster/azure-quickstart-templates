@@ -357,7 +357,7 @@ configuration EricomConnectServerSetup
         
          # sql credentials 
         [Parameter(Mandatory)]
-        [PSCredential]$sqlCreds,
+        [PSCredential]$sqlCreds
 
     ) 
 
