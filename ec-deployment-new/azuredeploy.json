@@ -19,14 +19,14 @@
         },
         "adminUsername": {
             "type": "string",
-	     "defaultValue": "ericom",
+	        "defaultValue": "ericom",
             "metadata": {
                 "description": "The name of the administrator of the new VM and the domain. Exclusion list: 'administrator'"
             }
         },
         "adminPassword": {
             "type": "securestring",
-	     "defaultValue": "Ericom123$",
+	        "defaultValue": "Ericom123$",
             "metadata": {
                 "description": "The password for the administrator account of the new VM and the domain"
             }
@@ -71,7 +71,7 @@
 	    "sqlserver" : "localhost",
         "sqldatabase" : "ConnectDB",
 	    "sqluser"  : "sa",
-	    "sqlpassword" : "W.A.Mozart!!!",
+	    "sqlpassword" : "P@55w0rd",
         "apiVersion": "2015-06-15"
     },
  

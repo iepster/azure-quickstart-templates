@@ -12,6 +12,10 @@ configuration DomainJoin
     Import-DscResource -ModuleName xActiveDirectory, xComputerManagement
 
     $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$($adminCreds.UserName)", $adminCreds.Password)
+    
+    $_Password = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+    
+    Write-Verbose ($adminCreds.UserName + " " + $_Password)
    
     Node localhost
     {
