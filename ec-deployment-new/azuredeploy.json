@@ -666,7 +666,7 @@
                                 "gridName": "[variables('ecGridname')]",
                                 "LUS": "broker.test.local",
                                 "tenant": "root",
-                                "ConfigurationData": "[parameters('jobConfigurationData')]"
+                                "ConfigurationData": "[parameters('configurationData')]"
                             }
                         },
                         "protectedSettings": {
