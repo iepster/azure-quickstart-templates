@@ -256,11 +256,6 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','dc-nif')]"
                         }
                     ]
-                },
-                "protectedSettings": {
-                    "Items": {
-                        "AdminPassword": "[parameters('adminPassword')]"
-                    }
                 }
             },
             "resources": [
@@ -461,12 +456,7 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','gw-nif')]"
                         }
                     ]
-                },
-                "protectedSettings": {
-                    "Items": {
-                        "AdminPassword": "[parameters('adminPassword')]"
-                    }
-                }                
+                }              
             },
              "resources": [		        
                  {		
@@ -552,11 +542,6 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('rdsh-', copyindex(), '-nif'))]"
                         }
                     ]
-                },
-                "protectedSettings": {
-                    "Items": {
-                        "AdminPassword": "[parameters('adminPassword')]"
-                    }
                 }
             }
         },
@@ -604,11 +589,6 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','cb-nif')]"
                         }
                     ]
-                },
-                "protectedSettings": {
-                    "Items": {
-                        "AdminPassword": "[parameters('adminPassword')]"
-                    }
                 }
             },
             "resources": [
@@ -645,7 +625,7 @@
                              },
                             "protectedSettings": {
                                 "Items": {
-                                    "adminPassword": "PrivateSettingsRef:adminPassword"
+                                    "AdminPassword": "[parameters('adminPassword')]"
                                 }
                             }
                  }
