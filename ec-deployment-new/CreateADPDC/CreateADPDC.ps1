@@ -83,7 +83,7 @@
             DependsOn = "[xWaitForADDomain]DscForestWait"
         }
 
-	Script CreateADUsers
+	   Script CreateADUsers
         {
             TestScript = { Test-Path "C:\aduserscreated" }
             SetScript = {

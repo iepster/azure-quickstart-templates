@@ -220,7 +220,7 @@
                 "osProfile": {
                     "computerName": "dc",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "PrivateSettingsRef:AdminPassword"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -432,7 +432,7 @@
                 "osProfile": {
                     "computerName": "gateway",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "PrivateSettingsRef:AdminPassword"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -518,7 +518,7 @@
                 "osProfile": {
                     "computerName": "[concat('rdsh-', copyIndex())]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "PrivateSettingsRef:AdminPassword"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -565,7 +565,7 @@
                 "osProfile": {
                     "computerName": "broker",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "PrivateSettingsRef:AdminPassword"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
