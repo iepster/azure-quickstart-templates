@@ -171,7 +171,7 @@ configuration ApplicationHost
         DomainJoin DomainJoin
         {
             domainName = $domainName 
-            adminCreds = $domainCreds 
+            adminCreds = $adminCreds 
         }
 
         WindowsFeature RDS-RD-Server
@@ -402,7 +402,7 @@ configuration EricomConnectServerSetup
         DomainJoin DomainJoin
         {
             domainName = $domainName 
-            adminCreds = $domainCreds 
+            adminCreds = $adminCreds 
         }
 	
        Script DownloadSQLMSI
