@@ -20,6 +20,9 @@
     },
     "dnsLabelPrefix": {
       "value": "GEN-UNIQUE"
+    },
+    "jobConfigurationData": {
+      "type": "{\"AllNodes\":[{\"NodeName\":\"*\",\"PSDscAllowDomainUser\":true,\"PSDscAllowPlainTextPassword\":true}]}"
     }
   }
 }

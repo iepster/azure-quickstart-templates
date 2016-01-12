@@ -52,6 +52,12 @@
             "metadata": {
                 "description": "The location of resources such as templates and DSC modules that the script is dependent"
             }
+        },
+        "jobConfigurationData": {
+            "type": "string",
+            "metadata": {
+                "description": "Escaped Json of DSC ConfigurationData"
+            }
         }
     },
 
@@ -279,6 +285,9 @@
                                 "AdminCreds": {
                                     "UserName": "[parameters('adminUsername')]",
                                     "Password": "PrivateSettingsRef:AdminPassword"
+                                },
+                                "parameters": {
+                                    "ConfigurationData": "[parameters('jobConfigurationData')]"
                                 }
                             }
                         },
@@ -483,7 +492,10 @@
                                  },		
                                 "gridName": "[variables('ecGridname')]",		
                                 "LUS": "broker.test.local",		
-                                "tenant": "root"
+                                "tenant": "root",
+                                "parameters": {
+                                    "ConfigurationData": "[parameters('jobConfigurationData')]"
+                                }
                              }		
                          },		
                          "protectedSettings": {		
@@ -620,7 +632,10 @@
                                         "sqlserver": "[variables('sqlserver')]",
                                         "sqldatabase": "[variables('sqldatabase')]",
                                         "sqluser": "[variables('sqluser')]",
-                                        "sqlpassword": "[variables('sqlpassword')]"
+                                        "sqlpassword": "[variables('sqlpassword')]",
+                                        "parameters": {
+                                            "ConfigurationData": "[parameters('jobConfigurationData')]"
+                                        }
                                     }
                              },
                             "protectedSettings": {
@@ -656,7 +671,10 @@
                                 "adminPassword": "PrivateSettingsRef:AdminPassword",
                                 "gridName": "[variables('ecGridname')]",
                                 "LUS": "broker.test.local",
-                                "tenant": "root"
+                                "tenant": "root",
+                                "parameters": {
+                                    "ConfigurationData": "[parameters('jobConfigurationData')]"
+                                }
                             }
                         },
                         "protectedSettings": {
