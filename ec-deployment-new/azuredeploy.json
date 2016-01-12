@@ -71,7 +71,7 @@
 	    "sqlserver" : "localhost",
         "sqldatabase" : "ConnectDB",
 	    "sqluser"  : "sa",
-	    "sqlpassword" : "sapass",
+	    "sqlpassword" : "W.A.Mozart!!!",
         "apiVersion": "2015-06-15"
     },
  
@@ -621,7 +621,7 @@
                                         "sqlserver": "[variables('sqlserver')]",
                                         "sqldatabase": "[variables('sqldatabase')]",
                                         "sqlCreds": {
-                                            "UserName": "[parameters('sqluser')]",
+                                            "UserName": "[variables('sqluser')]",
                                             "Password": "PrivateSettingsRef:SqlPassword"
                                         }
                                     }
@@ -629,7 +629,7 @@
                             "protectedSettings": {
                                 "Items": {
                                     "AdminPassword": "[parameters('adminPassword')]",
-                                    "SqlPassword": "[parameters('sqlpassword')]"
+                                    "SqlPassword": "[variables('sqlpassword')]"
                                 }
                             }
                  }
