@@ -595,6 +595,7 @@ configuration EricomConnectServerSetup
                 $baseFileName = [System.IO.Path]::GetFileName($configPath);
                 $folder = Split-Path $configPath;
                 cd $folder;
+                Write-Verbose "$configPath $arguments"
                 $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
                 if ($exitCode -eq 0) {
                     Write-Verbose "Ericom Connect Grid Server has been succesfuly configured."
