@@ -220,7 +220,7 @@
                 "osProfile": {
                     "computerName": "dc",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "PrivateSettingsRef:AdminPassword"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -256,6 +256,11 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','dc-nif')]"
                         }
                     ]
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
                 }
             },
             "resources": [
@@ -432,7 +437,7 @@
                 "osProfile": {
                     "computerName": "gateway",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "PrivateSettingsRef:AdminPassword"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -456,8 +461,12 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','gw-nif')]"
                         }
                     ]
-                }
-                
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
+                }                
             },
              "resources": [		        
                  {		
@@ -520,7 +529,7 @@
                 "osProfile": {
                     "computerName": "[concat('rdsh-', copyIndex())]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "PrivateSettingsRef:AdminPassword"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -544,6 +553,11 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('rdsh-', copyindex(), '-nif'))]"
                         }
                     ]
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
                 }
             }
         },
@@ -567,7 +581,7 @@
                 "osProfile": {
                     "computerName": "broker",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "PrivateSettingsRef:AdminPassword"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -591,6 +605,11 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces','cb-nif')]"
                         }
                     ]
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "AdminPassword": "[parameters('adminPassword')]"
+                    }
                 }
             },
             "resources": [
@@ -655,7 +674,7 @@
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
                                 "adminUser": "[parameters('adminUsername')]",
-                                "adminPassword": "[parameters('adminPassword')]",
+                                "adminPassword": "PrivateSettingsRef:AdminPassword",
                                 "gridName": "[variables('ecGridname')]",
                                 "LUS": "broker.test.local",
                                 "tenant": "root"
