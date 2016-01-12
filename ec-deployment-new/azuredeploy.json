@@ -491,10 +491,9 @@
                                      "Password": "PrivateSettingsRef:AdminPassword"		
   				    		
                                  },		
-   				      "gridName": "[variables('ecGridname')]",		
- 				      "LUS": "broker.test.local",		
- 				      "tenant": "root"		
- 		
+                                "gridName": "[variables('ecGridname')]",		
+                                "LUS": "broker.test.local",		
+                                "tenant": "root"
                              }		
                          },		
                          "protectedSettings": {		
@@ -622,10 +621,10 @@
                         "[resourceId('Microsoft.Compute/virtualMachines', 'cb-vm')]"
                     ],
                     "properties": {
-                                "publisher": "Microsoft.Powershell",
-                                "type": "DSC",
-                                "typeHandlerVersion": "2.8",
-                                "settings": {
+                            "publisher": "Microsoft.Powershell",
+                            "type": "DSC",
+                            "typeHandlerVersion": "2.8",
+                            "settings": {
                                     "ModulesUrl": "[concat(parameters('assetLocation'),'/Configuration.zip')]",
                                     "ConfigurationFunction": "Configuration.ps1\\EricomConnectServerSetup",
                                     "Properties": {
@@ -637,11 +636,11 @@
                                         "externalfqdn": "[reference(variables('publicIpRef')).dnsSettings.fqdn]",
                                         "sessionHostNamingPrefix": "rdsh-",
                                         "numberOfRdshInstances": "[parameters('numberOfRdshInstances')]",
-                            "gridName": "[variables('ecGridname')]",
-                            "sqlserver": "[variables('sqlserver')]",
-                            "sqldatabase": "[variables('sqldatabase')]",
-                            "sqluser": "[variables('sqluser')]",
-                            "sqlpassword": "[variables('sqlpassword')]"
+                                        "gridName": "[variables('ecGridname')]",
+                                        "sqlserver": "[variables('sqlserver')]",
+                                        "sqldatabase": "[variables('sqldatabase')]",
+                                        "sqluser": "[variables('sqluser')]",
+                                        "sqlpassword": "[variables('sqlpassword')]"
                                     }
                              },
                             "protectedSettings": {
