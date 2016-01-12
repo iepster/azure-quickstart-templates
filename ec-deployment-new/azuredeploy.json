@@ -420,7 +420,8 @@
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets', 'availabilityset')]",
-                "Microsoft.Network/networkInterfaces/gw-nif"
+                "Microsoft.Network/networkInterfaces/gw-nif",
+                "Microsoft.Compute/virtualMachines/cb-vm/extensions/EricomConnectServerSetup"
             ],
             "properties": {
                 "hardwareProfile": {
