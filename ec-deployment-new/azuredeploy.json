@@ -69,7 +69,7 @@
         "publicIpRef": "publicIp",
 	    "ecGridname" : "ecgrid",
 	    "sqlserver" : "localhost",
-        "sqldatabase" : "ConnectDB",
+        "sqldatabase" : "ERICOMCONNECTDB",
 	    "sqluser"  : "sa",
 	    "sqlpassword" : "P@55w0rd",
         "apiVersion": "2015-06-15"
