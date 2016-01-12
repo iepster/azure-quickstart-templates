@@ -297,7 +297,7 @@ configuration ApplicationHost
                 $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Remote Agent Client"
                 $configFile = "RemoteAgentConfigTool_4_5.exe"                
 
-                $_adminUser = "$Using:_adminUser" + "@$domainSuffix"
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
                 $_adminPass = "$Using:_adminPassword"
                 $_gridName = $Using:gridName
 
@@ -582,7 +582,7 @@ configuration EricomConnectServerSetup
                 $configFile = "EricomConnectConfigurationTool.exe"
                 
                 #$credentials = $Using:adminCreds;
-                $_adminUser = "$Using:_adminUser" + "@$domainSuffix"
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
                 $_adminPass = "$Using:_adminPassword"
                 $_gridName = $Using:gridName
                 $_hostOrIp = "$env:COMPUTERNAME"
