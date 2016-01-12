@@ -132,6 +132,15 @@ configuration GatewaySetup
             LogPath = "C:\log-ecsg.txt"
             DependsOn = "[Script]DownloadSecureGatewayMSI"
         }
+        
+        Package vcRedist 
+        { 
+            Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
+            ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
+            Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
+            Arguments = "/install /passive /norestart" 
+        } 
+
 
 
     }
