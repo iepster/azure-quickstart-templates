@@ -144,7 +144,7 @@ configuration GatewaySetup
         Script DisableFirewallDomainProfile
         {
             TestScript = {
-                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $true)
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
             }
             SetScript = {
                 Set-NetFirewallProfile -Profile Domain -Enabled False
@@ -342,13 +342,13 @@ configuration ApplicationHost
         Script DisableFirewallDomainProfile
         {
             TestScript = {
-                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $true)
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
             }
             SetScript = {
                 Set-NetFirewallProfile -Profile Domain -Enabled False
             }
             GetScript = {@{Result = "DisableFirewallDomainProfile"}}
-        } 
+        }
 
         Script JoinGridRemoteAgent
         {
@@ -638,7 +638,7 @@ configuration EricomConnectServerSetup
         Script DisableFirewallDomainProfile
         {
             TestScript = {
-                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $true)
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
             }
             SetScript = {
                 Set-NetFirewallProfile -Profile Domain -Enabled False
