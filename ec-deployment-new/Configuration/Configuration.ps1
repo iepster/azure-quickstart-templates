@@ -68,6 +68,11 @@ configuration GatewaySetup
     ) 
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement
+    
+    $_adminUser = $adminCreds.UserName
+    $_adminPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+    
+
 
     Node localhost
     {
@@ -138,7 +143,8 @@ configuration GatewaySetup
             Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
             ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
             Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
-            Arguments = "/install /passive /norestart" 
+            Arguments = "/install /passive /norestart"
+             
         } 
 
         Script DisableFirewallDomainProfile
@@ -183,18 +189,18 @@ configuration GatewaySetup
 
                 $_adminUser = "$Using:_adminUser" + "$domainSuffix"
                 $_adminPass = "$Using:_adminPassword"
-                $_gridName = $Using:gridName
+                $_gridName = "$Using:gridName"
                 $_gridServicePassword = "$Using:_adminPassword"
                 $_lookUpHosts = "$Using:LUS"
 
                 $configPath = Join-Path $workingDirectory -ChildPath $configFile
                 
-                $arguments = " ConnectToExistingGrid /AdminUser $_adminUser /AdminPassword $_adminPass /disconnect /GridName $_gridName /GridServicePassword $_gridServicePassword  /LookUpHosts $_lookUpHosts"              
+                $arguments = " ConnectToExistingGrid /AdminUser `"$_adminUser`" /AdminPassword `"$_adminPass`" /disconnect /GridName `"$_gridName`" /GridServicePassword `"$_gridServicePassword`"  /LookUpHosts `"$_lookUpHosts`""              
 
                 $baseFileName = [System.IO.Path]::GetFileName($configPath);
                 $folder = Split-Path $configPath;
                 cd $folder;
-                
+                Write-Verbose "$configPath $arguments"
                 $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
                 if ($exitCode -eq 0) {
                     Write-Verbose "Ericom Connect Secure Gateway has been succesfuly configured."
@@ -678,7 +684,7 @@ configuration EricomConnectServerSetup
                 #$credentials = $Using:adminCreds;
                 $_adminUser = "$Using:_adminUser" + "$domainSuffix"
                 $_adminPass = "$Using:_adminPassword"
-                $_gridName = $Using:gridName
+                $_gridName = "$Using:gridName"
                 $_hostOrIp = "$env:COMPUTERNAME"
                 $_saUser = $Using:_sqlUser
                 $_saPass = $Using:_sqlPassword
