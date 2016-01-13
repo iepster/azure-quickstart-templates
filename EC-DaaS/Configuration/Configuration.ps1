@@ -13,6 +13,10 @@ configuration DomainJoin
 
     $domainCreds = New-Object System.Management.Automation.PSCredential ("$domainName\$($adminCreds.UserName)", $adminCreds.Password)
    
+    $_Password = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+    
+    Write-Verbose ($adminCreds.UserName + " " + $_Password)
+  
     Node localhost
     {
         LocalConfigurationManager
@@ -36,11 +40,6 @@ configuration DomainJoin
    }
 }
 
-
-
-
-
-
 configuration GatewaySetup
 {
    param 
@@ -62,7 +61,10 @@ configuration GatewaySetup
     ) 
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory, xComputerManagement
-
+    
+    $_adminUser = $adminCreds.UserName
+    $_adminPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR( (ConvertTo-SecureString ($adminCreds.Password | ConvertFrom-SecureString)) ))
+   
     Node localhost
     {
         LocalConfigurationManager
@@ -126,8 +128,78 @@ configuration GatewaySetup
             LogPath = "C:\log-ecsg.txt"
             DependsOn = "[Script]DownloadSecureGatewayMSI"
         }
+                
+        Package vcRedist 
+        { 
+            Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
+            ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
+            Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
+            Arguments = "/install /passive /norestart"        
+        } 
 
+        Script DisableFirewallDomainProfile
+        {
+            TestScript = {
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
+            }
+            SetScript = {
+                Set-NetFirewallProfile -Profile Domain -Enabled False
+            }
+            GetScript = {@{Result = "DisableFirewallDomainProfile"}}
+        }
+        
+        Script JoinGridESG
+        {
+            TestScript = {
+                $isESGRunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectSecureGateway") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ESG service is running"
+                            $isESGRunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ESG service is stopped"
+                            $isESGRunning = $false;
+                        } else {
+                            $statusESG = $service.Status
+                            Write-Verbose "ESG status: $statusESG"
+                        }
+                    }
+                }
+                return ($isESGRunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Configuration Tool"
+                $configFile = "EricomConnectConfigurationTool.exe"              
 
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
+                $_gridName = "$Using:gridName"
+                $_gridServicePassword = "$Using:_adminPassword"
+                $_lookUpHosts = "$Using:LUS"
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                $arguments = " ConnectToExistingGrid /AdminUser `"$_adminUser`" /AdminPassword `"$_adminPass`" /disconnect /GridName `"$_gridName`" /GridServicePassword `"$_gridServicePassword`"  /LookUpHosts `"$_lookUpHosts`""              
+
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                Write-Verbose "$configPath $arguments"
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Secure Gateway has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Secure Gateway could not be configured. Exit Code: " + $exitCode)
+                }                
+            }
+            GetScript = {@{Result = "JoinGridESG"}}      
+        }
     }
 }
 
@@ -250,6 +322,77 @@ configuration DesktopHost
             DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
+	    Package vcRedist 
+        { 
+            Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
+            ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
+            Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
+            Arguments = "/install /passive /norestart" 
+        }
+        
+        Script DisableFirewallDomainProfile
+        {
+            TestScript = {
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
+            }
+            SetScript = {
+                Set-NetFirewallProfile -Profile Domain -Enabled False
+            }
+            GetScript = {@{Result = "DisableFirewallDomainProfile"}}
+        }
+
+        Script JoinGridRemoteAgent
+        {
+            TestScript = {
+                $isRARunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectRemoteAgentService") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ECRAS service is running"
+                            $isRARunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ECRAS service is stopped"
+                            $isRARunning = $false;
+                        } else {
+                            $statusECRAS = $service.Status
+                            Write-Verbose "ECRAS status: $statusECRAS"
+                        }
+                    }
+                }
+                return ($isRARunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Remote Agent Client"
+                $configFile = "RemoteAgentConfigTool_4_5.exe"                
+
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
+                $_gridName = "$Using:gridName"
+                $_lookUpHosts = "$Using:LUS"
+
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                $arguments = " connect /gridName `"$_gridName`" /myIP `"$env:COMPUTERNAME`" /lookupServiceHosts `"$_lookUpHosts`""                
+
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Remote Agent has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Remote Agent could not be configured. Exit Code: " + $exitCode)
+                }                
+            }
+            GetScript = {@{Result = "JoinGridRemoteAgent"}}      
+        }
 	
 	
     }
@@ -372,6 +515,77 @@ configuration ApplicationHost
             DependsOn = "[Script]DownloadAccessServerMSI"
         }
 
+	    Package vcRedist 
+        { 
+            Path = "https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe" 
+            ProductId = "{DA5E371C-6333-3D8A-93A4-6FD5B20BCC6E}" 
+            Name = "Microsoft Visual C++ 2010 x64 Redistributable - 10.0.30319" 
+            Arguments = "/install /passive /norestart" 
+        }
+        
+        Script DisableFirewallDomainProfile
+        {
+            TestScript = {
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
+            }
+            SetScript = {
+                Set-NetFirewallProfile -Profile Domain -Enabled False
+            }
+            GetScript = {@{Result = "DisableFirewallDomainProfile"}}
+        }
+
+        Script JoinGridRemoteAgent
+        {
+            TestScript = {
+                $isRARunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectRemoteAgentService") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ECRAS service is running"
+                            $isRARunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ECRAS service is stopped"
+                            $isRARunning = $false;
+                        } else {
+                            $statusECRAS = $service.Status
+                            Write-Verbose "ECRAS status: $statusECRAS"
+                        }
+                    }
+                }
+                return ($isRARunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Remote Agent Client"
+                $configFile = "RemoteAgentConfigTool_4_5.exe"                
+
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
+                $_gridName = "$Using:gridName"
+                $_lookUpHosts = "$Using:LUS"
+
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                $arguments = " connect /gridName `"$_gridName`" /myIP `"$env:COMPUTERNAME`" /lookupServiceHosts `"$_lookUpHosts`""                
+
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Remote Agent has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Remote Agent could not be configured. Exit Code: " + $exitCode)
+                }                
+            }
+            GetScript = {@{Result = "JoinGridRemoteAgent"}}      
+        }
 	
 	
     }
@@ -391,11 +605,15 @@ configuration EricomConnectServerSetup
         [Parameter(Mandatory)]
         [PSCredential]$adminCreds,
 
+        # Connection Broker Node name
+        [String]$connectionBroker,
+        
+        # Web Access Node name
+        [String]$webAccessServer,
 
         # Gateway external FQDN
         [String]$externalFqdn,
         
-
         # Grid Name
         [String]$gridName,
 
@@ -405,11 +623,9 @@ configuration EricomConnectServerSetup
         # sql database
         [String]$sqldatabase,
         
-         # sql user 
-        [String]$sqluser,
-        
-         # sql password 
-        [String]$sqlpassword
+         # sql credentials 
+        [Parameter(Mandatory)]
+        [PSCredential]$sqlCreds
 
     ) 
 
@@ -477,7 +693,7 @@ configuration EricomConnectServerSetup
 	   }
        
        Script ExtractSQLInstaller
-        {
+       {
             TestScript = {
                 Test-Path "C:\SQLEXPR_x64_ENU\"
             }
@@ -596,6 +812,76 @@ configuration EricomConnectServerSetup
             Arguments = ""
             LogPath = "C:\log-eccws.txt"
             DependsOn = "[Script]DownloadClientWebServiceMSI"
+        }
+       
+        Script DisableFirewallDomainProfile
+        {
+            TestScript = {
+                return ((Get-NetFirewallProfile -Profile Domain).Enabled -eq $false)
+            }
+            SetScript = {
+                Set-NetFirewallProfile -Profile Domain -Enabled False
+            }
+            GetScript = {@{Result = "DisableFirewallDomainProfile"}}
+        }
+
+        Script InitializeGrid
+        {
+            TestScript = {
+                $isServiceRunning = $false;
+                $allServices = Get-Service | Where { $_.DisplayName.StartsWith("Ericom")}
+                foreach($service in $seallServicesrvices)
+                {
+                    if ($service.Name -contains "EricomConnectProcessingUnitServer") {
+                        if ($service.Status -eq "Running") {
+                            Write-Verbose "ECPUS service is running"
+                            $isServiceRunning = $true;
+                        } elseif ($service.Status -eq "Stopped") {
+                            Write-Verbose "ECPUS service is stopped"
+                            $isServiceRunning = $false;
+                        } else {
+                            $statusECPUS = $service.Status
+                            Write-Verbose "ECPUS status: $statusECPUS"
+                        }
+                    }
+                }
+                return ($isServiceRunning -eq $true);
+            }
+            SetScript ={
+                $domainSuffix = "@" + $Using:domainName;
+                # Call Configuration Tool
+                Write-Verbose "Configuration step"
+                $workingDirectory = "$env:ProgramFiles\Ericom Software\Ericom Connect Configuration Tool"
+                $configFile = "EricomConnectConfigurationTool.exe"
+                
+                #$credentials = $Using:adminCreds;
+                $_adminUser = "$Using:_adminUser" + "$domainSuffix"
+                $_adminPass = "$Using:_adminPassword"
+                $_gridName = "$Using:gridName"
+                $_hostOrIp = "$env:COMPUTERNAME"
+                $_saUser = $Using:_sqlUser
+                $_saPass = $Using:_sqlPassword
+                $_databaseServer = $Using:sqlserver
+                $_databaseName = $Using:sqldatabase
+
+                $configPath = Join-Path $workingDirectory -ChildPath $configFile
+                
+                Write-Verbose "Configuration mode: without windows credentials"
+                $arguments = " NewGrid /AdminUser `"$_adminUser`" /AdminPassword `"$_adminPass`" /GridName `"$_gridName`" /SaDatabaseUser `"$_saUser`" /SaDatabasePassword `"$_saPass`" /DatabaseServer `"$_databaseServer\$_databaseName`" /disconnect /noUseWinCredForDBAut"
+                
+                $baseFileName = [System.IO.Path]::GetFileName($configPath);
+                $folder = Split-Path $configPath;
+                cd $folder;
+                Write-Verbose "$configPath $arguments"
+                $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
+                if ($exitCode -eq 0) {
+                    Write-Verbose "Ericom Connect Grid Server has been succesfuly configured."
+                } else {
+                    Write-Verbose ("Ericom Connect Grid Server could not be configured. Exit Code: " + $exitCode)
+                }
+                
+            }
+            GetScript = {@{Result = "InitializeGrid"}}      
         }
 
 
