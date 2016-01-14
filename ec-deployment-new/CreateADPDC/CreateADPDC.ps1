@@ -87,12 +87,20 @@
         {
             TestScript = { Test-Path "C:\aduserscreated" }
             SetScript = {
-            $domainSuffix = "@" + $Using:DomainName;
-            $templateUser = "ericom"
-            $user = "demouser"
-            $pass = "Pa55w0rd"
-            New-ADUser -name "$user" -Instance (Get-ADUser $templateUser) -AccountPassword (ConvertTo-SecureString "$pass" -AsPlainText -Force) -ChangePasswordAtLogon $False -CannotChangePassword $True -Enabled $True -GivenName "$user" -SamAccountName "$user" -Surname ="$user" -UserPrincipalName ("$user" + "$domainSuffix")
+                $domainSuffix = "@" + $Using:DomainName;
+                $templateUser = "ericom"
+                $user = "demouser"
+                $pass = "P@55w0rd"
+                
+                New-ADUser -name "$user" -Instance (Get-ADUser $templateUser) -AccountPassword (ConvertTo-SecureString "$pass" -AsPlainText -Force) -ChangePasswordAtLogon $False -CannotChangePassword $True -Enabled $True -GivenName "$user" -SamAccountName "$user" -Surname ="$user" -UserPrincipalName ("$user" + "$domainSuffix")
                 New-Item -Path "C:\aduserscreated" -ItemType Directory -Force 
+                
+                Invoke-Command -ComputerName dc -ScriptBlock { 
+                        $computer = $env:COMPUTERNAME
+                        $domain = "$Using:DomainName"
+                        $group = [ADSI]"WinNT://$computer/Remote Desktop Users,group"
+                        $group.psbase.Invoke("add",([ADSI]"WinNT://$domain/$user").Path) 
+                    }    
             }
             GetScript = {@{Result = "CreateADUsers"}}
         }
