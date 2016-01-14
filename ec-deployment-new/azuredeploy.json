@@ -31,6 +31,12 @@
                 "description": "The password for the administrator account of the new VM and the domain"
             }
         },
+       "emailAddress": {
+           "type": "string",
+           "metadata": {
+               "description": "The email address to send the test message to."
+            }
+        },
         "numberOfRdshInstances": {
             "type": "int",
             "defaultValue": 1,
@@ -625,6 +631,7 @@
                                             "UserName": "[variables('sqluser')]",
                                             "Password": "PrivateSettingsRef:SqlPassword"
                                         }
+                                        "emailAddress": "[parameters('emailAddress')]"
                                     }
                              },
                             "protectedSettings": {
