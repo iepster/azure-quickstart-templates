@@ -4,7 +4,7 @@
 
 This template deploys the following resources:
 
-<ul><li>storage account;</li><li>vnet, public ip, load balancer;</li><li>domain controller vm;</li><li>Ericom Connect Gateway;</li><li>Ericom Connect Grid;</li><li>a number of RD Session hosts (number defined by 'numberOfRdshInstances' parameter)</li></ul>
+<ul><li>Storage account;</li><li>Vnet, public ip, load balancer;</li><li>Domain controller vm;</li><li>Ericom Connect Gateway;</li><li>Ericom Connect Grid;</li><li>A number of RD Session hosts (number defined by 'numberOfRdshInstances' parameter)</li></ul>
 
 The template will deploy a domain controller, join all VMs to the new domain, configure each Windows VM and then setup and configure Ericom Connect.
 
