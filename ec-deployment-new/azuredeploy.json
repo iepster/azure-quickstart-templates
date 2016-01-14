@@ -630,7 +630,7 @@
                                         "sqlCreds": {
                                             "UserName": "[variables('sqluser')]",
                                             "Password": "PrivateSettingsRef:SqlPassword"
-                                        }
+                                        },
                                         "emailAddress": "[parameters('emailAddress')]"
                                     }
                              },

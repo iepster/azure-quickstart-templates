@@ -1,3 +1,30 @@
+function SendMailTo {
+   param (
+    [Parameter()][String]$To = "nobody",
+    [Parameter()][String]$Subject = "Azure Deployment Notification"
+    [Parameter()][String]$Message = "",
+    [Parameter()][String]$Keyword = ""
+   )
+    
+	$date=(Get-Date).TOString();
+	
+    [String]$SMTPServer = "ericom-com.mail.protection.outlook.com"
+    [String]$Port = 25
+    [String]$From = "daas@ericom.com"
+    
+    if ($Message -eq "") {
+        [String]$Message = "<h1>Hello,</h1><p>Here is the Azure Notification email regarding your deployment.</p><p>$Keyword</p>"
+    }
+        
+    $securePassword = ConvertTo-SecureString -String "1qaz@Wsx#" -AsPlainText -Force
+    $credential = New-Object System.Management.Automation.PSCredential ("daas@ericom.com", $securePassword)
+    $date = (Get-Date).ToString();	
+    
+    if ($To -neq "nobody") {
+	   Send-MailMessage -Body "$Message" -BodyAsHtml -Subject "$Subject" -SmtpServer $SmtpServer -Port $Port -Credential $credential -From $credential.UserName -To $To -ErrorAction Continue
+    }
+}
+
 configuration DomainJoin 
 { 
    param 
@@ -206,7 +233,7 @@ configuration GatewaySetup
                     Write-Verbose "Ericom Connect Secure Gateway has been succesfuly configured."
                 } else {
                     Write-Verbose ("Ericom Connect Secure Gateway could not be configured. Exit Code: " + $exitCode)
-                }                
+                }
             }
             GetScript = {@{Result = "JoinGridESG"}}      
         }
@@ -450,7 +477,9 @@ configuration EricomConnectServerSetup
         
          # sql credentials 
         [Parameter(Mandatory)]
-        [PSCredential]$sqlCreds
+        [PSCredential]$sqlCreds,
+        
+        [String]$emailAddress
 
     ) 
 
@@ -703,8 +732,10 @@ configuration EricomConnectServerSetup
                 $exitCode = (Start-Process -Filepath $configPath -ArgumentList "$arguments" -Wait -Passthru).ExitCode
                 if ($exitCode -eq 0) {
                     Write-Verbose "Ericom Connect Grid Server has been succesfuly configured."
+                    SendMailTo -To "$Using:emailAddress" -Keyword "CB: Ericom Connect Grid Server has been succesfuly configured."
                 } else {
                     Write-Verbose ("Ericom Connect Grid Server could not be configured. Exit Code: " + $exitCode)
+                    SendMailTo -To "$Using:emailAddress" -Keyword ("CB: Ericom Connect Grid Server could not be configured. Exit Code: " + $exitCode)
                 }
                 
             }
