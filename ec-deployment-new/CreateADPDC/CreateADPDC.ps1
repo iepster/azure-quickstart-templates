@@ -95,12 +95,15 @@
                 New-ADUser -name "$user" -Instance (Get-ADUser $templateUser) -AccountPassword (ConvertTo-SecureString "$pass" -AsPlainText -Force) -ChangePasswordAtLogon $False -CannotChangePassword $True -Enabled $True -GivenName "$user" -SamAccountName "$user" -Surname ="$user" -UserPrincipalName ("$user" + "$domainSuffix")
                 New-Item -Path "C:\aduserscreated" -ItemType Directory -Force 
                 
-                Invoke-Command -ComputerName dc -ScriptBlock { 
-                        $computer = $env:COMPUTERNAME
-                        $domain = "$Using:DomainName"
-                        $group = [ADSI]"WinNT://$computer/Remote Desktop Users,group"
-                        $group.psbase.Invoke("add",([ADSI]"WinNT://$domain/$user").Path) 
-                    }    
+                $computername = $env:COMPUTERNAME
+                $domainName = $Using:DomainName;
+                Invoke-Command -ComputerName $computername -ScriptBlock { 
+                    $computer = $env:COMPUTERNAME
+                    $domain = "$domainName"
+                    $username = "$user"
+                    $group = [ADSI]"WinNT://$computer/Remote Desktop Users,group"
+                    $group.psbase.Invoke("add",([ADSI]"WinNT://$domain/$username").Path) 
+                } 
             }
             GetScript = {@{Result = "CreateADUsers"}}
         }
