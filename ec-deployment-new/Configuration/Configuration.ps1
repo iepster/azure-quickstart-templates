@@ -1,7 +1,7 @@
 function SendMailTo {
    param (
     [Parameter()][String]$To = "nobody",
-    [Parameter()][String]$Subject = "Azure Deployment Notification"
+    [Parameter()][String]$Subject = "Azure Deployment Notification",
     [Parameter()][String]$Message = "",
     [Parameter()][String]$Keyword = ""
    )
@@ -20,7 +20,7 @@ function SendMailTo {
     $credential = New-Object System.Management.Automation.PSCredential ("daas@ericom.com", $securePassword)
     $date = (Get-Date).ToString();	
     
-    if ($To -neq "nobody") {
+    if ($To -ne "nobody") {
 	   Send-MailMessage -Body "$Message" -BodyAsHtml -Subject "$Subject" -SmtpServer $SmtpServer -Port $Port -Credential $credential -From $credential.UserName -To $To -ErrorAction Continue
     }
 }
